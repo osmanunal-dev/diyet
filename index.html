@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diyet Takip — Diyetisyen Paneli</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
+
+  :root{
+    --bg:#EEF3EE;
+    --surface:#FFFFFF;
+    --surface-2:#F6F9F5;
+    --ink:#16241F;
+    --ink-soft:#52635C;
+    --line:#DCE6DD;
+    --primary:#2F6B4F;
+    --primary-dark:#234E3A;
+    --primary-soft:#E3EFE6;
+    --accent:#E0712F;
+    --accent-soft:#FBEBE0;
+    --danger:#C0432F;
+    --shadow:0 1px 2px rgba(22,36,31,.05),0 8px 24px rgba(22,36,31,.06);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);
+    line-height:1.5;-webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em;line-height:1.15}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  input,select,textarea{font-family:inherit;font-size:15px;color:var(--ink)}
+  .hidden{display:none !important}
+
+  /* ---------- generic ---------- */
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    padding:11px 18px;border-radius:11px;font-weight:600;font-size:15px;
+    background:var(--primary);color:#fff;transition:.15s;white-space:nowrap}
+  .btn:hover{background:var(--primary-dark)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn.ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#EDF2EC}
+  .btn.accent{background:var(--accent)}
+  .btn.accent:hover{filter:brightness(.94)}
+  .btn.sm{padding:7px 12px;font-size:13.5px;border-radius:9px}
+  .btn.danger{background:transparent;color:var(--danger);border:1px solid #E8C9C2}
+  .btn.danger:hover{background:#FBEEEC}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+  .field label{font-size:13px;font-weight:600;color:var(--ink-soft)}
+  .field input,.field select,.field textarea{
+    padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--surface);
+    transition:.15s;width:100%}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  .row{display:flex;gap:12px}
+  .row > *{flex:1}
+  .muted{color:var(--ink-soft);font-size:14px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
+  .pill.green{background:var(--primary-soft);color:var(--primary-dark)}
+  .pill.orange{background:var(--accent-soft);color:var(--accent)}
+  .err{color:var(--danger);font-size:13.5px;min-height:18px;font-weight:500}
+
+  /* ---------- login ---------- */
+  #login{min-height:100vh;display:grid;place-items:center;padding:24px}
+  .login-card{width:100%;max-width:420px;background:var(--surface);border-radius:24px;
+    box-shadow:var(--shadow);padding:34px 30px;border:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+  .brand .mark{width:42px;height:42px;border-radius:12px;background:var(--primary);
+    display:grid;place-items:center;color:#fff;flex:none}
+  .brand .mark svg{width:24px;height:24px}
+  .brand h1{font-size:21px}
+  .brand p{font-size:12.5px;color:var(--ink-soft);font-family:'Plus Jakarta Sans'}
+  .tabs{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:22px;border:1px solid var(--line)}
+  .tabs button{flex:1;padding:9px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink-soft);transition:.15s}
+  .tabs button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.07)}
+  .login-foot{margin-top:18px;text-align:center;font-size:13.5px;color:var(--ink-soft)}
+  .linkbtn{color:var(--primary);font-weight:600;background:none}
+
+  /* ---------- app shell ---------- */
+  #app{min-height:100vh;display:flex;flex-direction:column}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--line);
+    padding:12px 22px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:30}
+  .topbar .mark{width:34px;height:34px;border-radius:10px;background:var(--primary);display:grid;place-items:center;color:#fff;flex:none}
+  .topbar .mark svg{width:19px;height:19px}
+  .topbar .who{font-weight:700;font-size:15px}
+  .topbar .role{font-size:12px;color:var(--ink-soft)}
+  .topbar .spacer{flex:1}
+  .container{width:100%;max-width:980px;margin:0 auto;padding:26px 22px 80px}
+
+  .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .section-head h2{font-size:25px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .card.pad{padding:20px}
+  .grid{display:grid;gap:14px}
+
+  /* client list */
+  .client-row{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:.12s}
+  .client-row:last-child{border-bottom:none}
+  .client-row:hover{background:var(--surface-2)}
+  .avatar{width:42px;height:42px;border-radius:12px;background:var(--primary-soft);color:var(--primary-dark);
+    display:grid;place-items:center;font-weight:700;flex:none;font-size:16px}
+  .client-row .meta{flex:1;min-width:0}
+  .client-row .meta .nm{font-weight:600}
+  .client-row .meta .sub{font-size:13px;color:var(--ink-soft)}
+  .chev{color:var(--ink-soft);flex:none}
+
+  /* day tabs */
+  .daytabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+  .daytabs button{padding:8px 13px;border-radius:10px;font-weight:600;font-size:13.5px;
+    background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);white-space:nowrap}
+  .daytabs button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .daytabs button.today{position:relative}
+  .daytabs button.today::after{content:'';position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+  /* meal editor / view */
+  .meal{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .meal .mhead{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .meal .mhead .time{font-weight:700;font-variant-numeric:tabular-nums;background:var(--primary-soft);color:var(--primary-dark);padding:4px 10px;border-radius:8px;font-size:14px}
+  .meal-view{display:flex;gap:14px;padding:15px;border:1px solid var(--line);border-radius:14px;margin-bottom:12px;background:var(--surface)}
+  .meal-view .clock{flex:none;width:58px;text-align:center}
+  .meal-view .clock .t{font-weight:800;font-variant-numeric:tabular-nums;font-size:17px}
+  .meal-view .clock .lbl{font-size:11px;color:var(--ink-soft)}
+  .meal-view .body{flex:1;border-left:2px solid var(--primary-soft);padding-left:14px}
+  .meal-view .body .nm{font-weight:700;margin-bottom:3px}
+  .meal-view .body .ic{white-space:pre-wrap;color:var(--ink-soft);font-size:14.5px}
+  .meal-view.soon{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .meal-view.soon .body{border-color:var(--accent)}
+
+  .empty{text-align:center;padding:46px 20px;color:var(--ink-soft)}
+  .empty svg{width:42px;height:42px;opacity:.5;margin-bottom:10px}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:18px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px}
+  .stat .v{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;font-family:'Fraunces'}
+  .stat .k{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .stat .v small{font-size:14px;font-weight:600;color:var(--ink-soft)}
+
+  /* weight log */
+  .wlog{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line)}
+  .wlog:last-child{border-bottom:none}
+  .wlog .d{font-size:13px;color:var(--ink-soft);width:96px;flex:none}
+  .wlog .kg{font-weight:700;font-variant-numeric:tabular-nums}
+  .wlog .delta{font-size:12.5px;font-weight:600;margin-left:auto}
+  .down{color:var(--primary)}.up{color:var(--accent)}
+
+  /* tabbar (client) */
+  .subtabs{display:flex;gap:7px;margin-bottom:20px;flex-wrap:wrap}
+  .subtabs button{padding:9px 15px;border-radius:11px;font-weight:600;font-size:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink-soft)}
+  .subtabs button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(22,36,31,.45);backdrop-filter:blur(2px);
+    display:grid;place-items:center;padding:20px;z-index:60}
+  .modal{background:var(--surface);border-radius:20px;width:100%;max-width:460px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:90vh;overflow:auto}
+  .modal h3{font-size:21px;margin-bottom:4px}
+  .modal .sub{color:var(--ink-soft);font-size:14px;margin-bottom:18px}
+  .modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+
+  /* toast */
+  #toasts{position:fixed;top:16px;right:16px;z-index:90;display:flex;flex-direction:column;gap:10px;max-width:340px}
+  .toast{background:var(--ink);color:#fff;padding:13px 16px;border-radius:13px;box-shadow:0 10px 30px rgba(0,0,0,.3);
+    display:flex;gap:11px;align-items:flex-start;animation:slidein .25s ease}
+  .toast.meal{background:var(--accent)}
+  .toast .tt{font-weight:700;font-size:14px}
+  .toast .tb{font-size:13px;opacity:.92}
+  @keyframes slidein{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+
+  /* chart */
+  .chart-wrap{position:relative}
+  svg.chart{width:100%;height:200px;display:block}
+
+  .notice{background:var(--accent-soft);border:1px solid #F0CFB6;color:#8a4216;
+    padding:13px 15px;border-radius:13px;font-size:13.5px;display:flex;gap:10px;align-items:flex-start;margin-bottom:18px}
+  .notice svg{flex:none;width:18px;height:18px;margin-top:1px}
+
+  @media(max-width:560px){
+    .container{padding:18px 14px 80px}
+    .row{flex-direction:column;gap:0}
+    .section-head h2{font-size:21px}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login">
+  <!-- genel giriş (danışan + diyetisyen) -->
+  <div class="login-card" id="loginPublic">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+      <div>
+        <h1>Diyet Takip</h1>
+        <p>Diyetisyen & danışan platformu</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button id="tabDanisan" class="active" onclick="setLoginTab('danisan')">Danışan</button>
+      <button id="tabDiyetisyen" onclick="setLoginTab('diyetisyen')">Diyetisyen</button>
+    </div>
+
+    <div class="field">
+      <label>Kullanıcı adı</label>
+      <input id="loginUser" autocomplete="username" placeholder="kullanıcı adınız">
+    </div>
+    <div class="field">
+      <label>Şifre</label>
+      <input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;margin-top:6px" onclick="handleLogin()">Giriş yap</button>
+  </div>
+
+  <!-- gizli admin girişi (#admin ile açılır) -->
+  <div class="login-card hidden" id="loginAdmin">
+    <div class="brand">
+      <div class="mark" style="background:var(--ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></div>
+      <div>
+        <h1>Admin Paneli</h1>
+        <p>Yönetici girişi</p>
+      </div>
+    </div>
+    <div class="field">
+      <label>Kullanıcı adı</label>
+      <input id="adminUser" autocomplete="username" placeholder="admin kullanıcı adı">
+    </div>
+    <div class="field">
+      <label>Şifre</label>
+      <input id="adminPass" type="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <div class="err" id="adminErr"></div>
+    <button class="btn" id="adminBtn" style="width:100%;margin-top:6px;background:var(--ink)" onclick="handleAdminLogin()">Giriş yap</button>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+    <div>
+      <div class="who" id="topWho">—</div>
+      <div class="role" id="topRole">—</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn ghost sm" onclick="logout()">Çıkış</button>
+  </div>
+  <div class="container" id="view"></div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toasts"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, where }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+/* =====================================================================
+   1) AYARLAR  —  BURAYI DOLDUR
+   Firebase konsolundan kendi projenin config'ini yapıştır.
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAFZy4qux7iE3zT2sAPU7tYaz3FbEMG5Eg",
+  authDomain: "diyet-takip-46b5e.firebaseapp.com",
+  projectId: "diyet-takip-46b5e",
+  storageBucket: "diyet-takip-46b5e.firebasestorage.app",
+  messagingSenderId: "992309349104",
+  appId: "1:992309349104:web:30826c08c8eb6dffac1035"
+};
+const BILDIRIM_DK = 15;   // öğüne kaç dakika kala uyarı verilsin
+const EPOSTA_SONEKI = "@diyet.local"; // kullanıcı adı -> sahte e-posta dönüşümü
+
+/* ===================================================================== */
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+// danışan hesabı oluştururken diyetisyenin oturumunu düşürmemek için ikincil app
+const secondaryApp = initializeApp(firebaseConfig, "ikincil");
+const secondaryAuth = getAuth(secondaryApp);
+
+const GUNLER = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const HAFTA = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+
+let state = { uid:null, profil:null, loginTab:'danisan' };
+
+/* ---------- yardımcılar ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const userToEmail = u => u.trim().toLowerCase().replace(/\s+/g,'') + EPOSTA_SONEKI;
+const bugunGun = () => GUNLER[new Date().getDay()];
+const bugunISO = () => new Date().toISOString().slice(0,10);
+function nowMin(){ const d=new Date(); return d.getHours()*60+d.getMinutes(); }
+function saatToMin(s){ const m=/^(\d{1,2}):(\d{2})$/.exec(s||''); return m? (+m[1])*60+(+m[2]) : null; }
+function trTarih(iso){ try{return new Date(iso+'T00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short'});}catch{return iso;} }
+function initialler(ad){ return (ad||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase(); }
+
+function toast(title, body, kind){
+  const el=document.createElement('div');
+  el.className='toast'+(kind?' '+kind:'');
+  el.innerHTML=`<div><div class="tt">${esc(title)}</div>${body?`<div class="tb">${esc(body)}</div>`:''}</div>`;
+  $('toasts').appendChild(el);
+  setTimeout(()=>el.remove(), kind==='meal'?9000:4000);
+}
+function authHata(e){
+  const c=(e&&e.code)||'';
+  if(c.includes('invalid-credential')||c.includes('wrong-password')||c.includes('user-not-found')) return 'Kullanıcı adı veya şifre hatalı.';
+  if(c.includes('email-already-in-use')) return 'Bu kullanıcı adı zaten kayıtlı.';
+  if(c.includes('weak-password')) return 'Şifre en az 6 karakter olmalı.';
+  if(c.includes('network')) return 'Bağlantı hatası. İnternetini kontrol et.';
+  if(c.includes('configuration-not-found')||c.includes('api-key')) return 'Firebase ayarları eksik. Dosyadaki firebaseConfig kısmını doldur.';
+  return (e&&e.message)||'Bir hata oluştu.';
+}
+
+/* ---------- modal ---------- */
+function modal(html){
+  const root=$('modalRoot');
+  root.innerHTML=`<div class="overlay" id="ovl"><div class="modal">${html}</div></div>`;
+  $('ovl').addEventListener('click',e=>{ if(e.target.id==='ovl') closeModal(); });
+}
+function closeModal(){ $('modalRoot').innerHTML=''; }
+window.closeModal=closeModal;
+
+/* =====================================================================
+   LOGIN
+   ===================================================================== */
+window.setLoginTab=function(t){
+  state.loginTab=t;
+  $('tabDanisan').classList.toggle('active',t==='danisan');
+  $('tabDiyetisyen').classList.toggle('active',t==='diyetisyen');
+  $('loginErr').textContent='';
+};
+
+// danışan / diyetisyen girişi (kayıt yok, sadece giriş)
+window.handleLogin=async function(){
+  const u=$('loginUser').value.trim(), p=$('loginPass').value, err=$('loginErr');
+  err.textContent='';
+  if(!u||!p){ err.textContent='Kullanıcı adı ve şifre gerekli.'; return; }
+  const btn=$('loginBtn'); btn.disabled=true; const lbl=btn.textContent; btn.textContent='...';
+  try{ await signInWithEmailAndPassword(auth, userToEmail(u), p); }
+  catch(e){ err.textContent=authHata(e); }
+  finally{ btn.disabled=false; btn.textContent=lbl; }
+};
+
+// gizli admin girişi (yalnızca giriş; admin hesabı Firebase'de tanımlı)
+window.handleAdminLogin=async function(){
+  const u=$('adminUser').value.trim(), p=$('adminPass').value, err=$('adminErr');
+  err.textContent='';
+  if(!u||!p){ err.textContent='Kullanıcı adı ve şifre gerekli.'; return; }
+  const btn=$('adminBtn'); btn.disabled=true; const lbl=btn.textContent; btn.textContent='...';
+  try{ await signInWithEmailAndPassword(auth, userToEmail(u), p); }
+  catch(e){ err.textContent=authHata(e); }
+  finally{ btn.disabled=false; btn.textContent=lbl; }
+};
+
+/* =====================================================================
+   OTURUM
+   ===================================================================== */
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){ state.uid=null; state.profil=null; showLogin(); return; }
+  state.uid=user.uid;
+  const snap=await getDoc(doc(db,'kullanicilar',user.uid));
+  if(!snap.exists()){ await signOut(auth); return; }
+  state.profil={ id:user.uid, ...snap.data() };
+  showApp();
+});
+
+function showLogin(){
+  stopReminders();
+  $('app').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  // #admin varsa admin giriş kartını göster, yoksa normal
+  const adminMode = location.hash.toLowerCase()==='#admin';
+  $('loginPublic').classList.toggle('hidden', adminMode);
+  $('loginAdmin').classList.toggle('hidden', !adminMode);
+  ['loginUser','loginPass','adminUser','adminPass'].forEach(id=>{ if($(id))$(id).value=''; });
+}
+function showApp(){
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('topWho').textContent=state.profil.adSoyad||state.profil.kullaniciAdi;
+  const r=state.profil.rol;
+  $('topRole').textContent = r==='admin'?'Admin' : r==='diyetisyen'?'Diyetisyen':'Danışan';
+  if(r==='admin') renderAdmin();
+  else if(r==='diyetisyen') renderDiyetisyen();
+  else { renderDanisan(); startReminders(); }
+}
+window.logout=async function(){ await signOut(auth); };
+
+// adres çubuğunda #admin değişirse giriş ekranını güncelle
+window.addEventListener('hashchange', ()=>{ if(!state.uid) showLogin(); });
+
+/* =====================================================================
+   ADMIN PANELİ  (diyetisyen kayıtları)
+   ===================================================================== */
+let diyetisyenler=[];
+async function renderAdmin(){
+  $('view').innerHTML=`
+    <div class="section-head">
+      <h2>Diyetisyenler</h2>
+      <button class="btn accent" onclick="yeniDiyetisyenModal()">+ Yeni diyetisyen</button>
+    </div>
+    <div class="card" id="dytCard"><div class="empty">Yükleniyor…</div></div>`;
+  await loadDiyetisyenler();
+}
+async function loadDiyetisyenler(){
+  const q=query(collection(db,'kullanicilar'), where('rol','==','diyetisyen'));
+  const snap=await getDocs(q);
+  diyetisyenler=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.adSoyad||'').localeCompare(b.adSoyad||'','tr'));
+  const card=$('dytCard');
+  if(!diyetisyenler.length){
+    card.innerHTML=`<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <div>Henüz diyetisyen yok.<br>“Yeni diyetisyen” ile ekle.</div></div>`;
+    return;
+  }
+  card.innerHTML=diyetisyenler.map(d=>`
+    <div class="client-row" style="cursor:default">
+      <div class="avatar" style="background:var(--accent-soft);color:var(--accent)">${esc(initialler(d.adSoyad))}</div>
+      <div class="meta">
+        <div class="nm">${esc(d.adSoyad||d.kullaniciAdi)}</div>
+        <div class="sub">@${esc(d.kullaniciAdi)}${d.olusturulma?' · '+new Date(d.olusturulma).toLocaleDateString('tr-TR'):''}</div>
+      </div>
+      <button class="btn danger sm" onclick="diyetisyenSil('${d.id}','${esc(d.adSoyad||d.kullaniciAdi)}')">Sil</button>
+    </div>`).join('');
+}
+window.yeniDiyetisyenModal=function(){
+  modal(`
+    <h3>Yeni diyetisyen</h3>
+    <div class="sub">Diyetisyen bu kullanıcı adı ve şifreyle giriş yapacak.</div>
+    <div class="field"><label>Ad soyad</label><input id="y_ad" placeholder="Dyt. Ali Demir"></div>
+    <div class="field"><label>Kullanıcı adı</label><input id="y_kadi" placeholder="alidemir" autocomplete="off"></div>
+    <div class="field"><label>Şifre <span class="muted">(en az 6 karakter)</span></label><input id="y_sifre" placeholder="••••••"></div>
+    <div class="err" id="y_err"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+      <button class="btn" id="y_kaydet" onclick="diyetisyenKaydet()">Oluştur</button>
+    </div>`);
+};
+window.diyetisyenKaydet=async function(){
+  const ad=$('y_ad').value.trim(), kadi=$('y_kadi').value.trim(), sifre=$('y_sifre').value;
+  const err=$('y_err'); err.textContent='';
+  if(!ad||!kadi||!sifre){ err.textContent='Ad, kullanıcı adı ve şifre zorunlu.'; return; }
+  if(sifre.length<6){ err.textContent='Şifre en az 6 karakter olmalı.'; return; }
+  const btn=$('y_kaydet'); btn.disabled=true; btn.textContent='Oluşturuluyor…';
+  try{
+    const cred=await createUserWithEmailAndPassword(secondaryAuth, userToEmail(kadi), sifre);
+    await setDoc(doc(db,'kullanicilar',cred.user.uid),{
+      rol:'diyetisyen', kullaniciAdi:kadi, adSoyad:ad, olusturanAdmin:state.uid, olusturulma:Date.now()
+    });
+    await signOut(secondaryAuth);
+    closeModal();
+    toast('Diyetisyen eklendi', ad+' giriş yapabilir.');
+    await loadDiyetisyenler();
+  }catch(e){ err.textContent=authHata(e); btn.disabled=false; btn.textContent='Oluştur'; }
+};
+window.diyetisyenSil=function(id,ad){
+  modal(`<h3>Diyetisyeni sil</h3>
+    <div class="sub">${esc(ad)} panelden kaldırılacak. (Giriş hesabı Firebase konsolu → Authentication kısmından ayrıca silinmeli.)</div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+    <button class="btn danger" onclick="diyetisyenSilOnay('${id}')">Evet, sil</button></div>`);
+};
+window.diyetisyenSilOnay=async function(id){
+  try{ await deleteDoc(doc(db,'kullanicilar',id)); closeModal(); toast('Silindi'); await loadDiyetisyenler(); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+
+/* =====================================================================
+   DİYETİSYEN PANELİ
+   ===================================================================== */
+let danisanlar=[];
+async function renderDiyetisyen(){
+  const v=$('view');
+  v.innerHTML=`
+    <div class="section-head">
+      <h2>Danışanlarım</h2>
+      <button class="btn accent" onclick="yeniDanisanModal()">+ Yeni danışan</button>
+    </div>
+    <div class="card" id="clientCard"><div class="empty">Yükleniyor…</div></div>`;
+  await loadDanisanlar();
+}
+async function loadDanisanlar(){
+  const q=query(collection(db,'kullanicilar'), where('olusturan','==',state.uid));
+  const snap=await getDocs(q);
+  danisanlar=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.adSoyad||'').localeCompare(b.adSoyad||'','tr'));
+  const card=$('clientCard');
+  if(!danisanlar.length){
+    card.innerHTML=`<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <div>Henüz danışan eklemedin.<br>“Yeni danışan” ile başla.</div></div>`;
+    return;
+  }
+  card.innerHTML=danisanlar.map(d=>`
+    <div class="client-row" onclick="acDanisan('${d.id}')">
+      <div class="avatar">${esc(initialler(d.adSoyad))}</div>
+      <div class="meta">
+        <div class="nm">${esc(d.adSoyad||d.kullaniciAdi)}</div>
+        <div class="sub">@${esc(d.kullaniciAdi)} · ${ogunSayisi(d)} öğün/gün</div>
+      </div>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+    </div>`).join('');
+}
+function ogunSayisi(d){
+  const g=d.diyet&&d.diyet.gunler; if(!g) return 0;
+  let max=0; HAFTA.forEach(k=>{ if(g[k]) max=Math.max(max,g[k].length); }); return max;
+}
+
+window.yeniDanisanModal=function(){
+  modal(`
+    <h3>Yeni danışan</h3>
+    <div class="sub">Danışan bu kullanıcı adı ve şifreyle giriş yapacak.</div>
+    <div class="field"><label>Ad soyad</label><input id="d_ad" placeholder="Ayşe Yılmaz"></div>
+    <div class="field"><label>Kullanıcı adı</label><input id="d_kadi" placeholder="ayse" autocomplete="off"></div>
+    <div class="field"><label>Şifre <span class="muted">(en az 6 karakter)</span></label><input id="d_sifre" placeholder="••••••"></div>
+    <div class="row">
+      <div class="field"><label>Boy (cm)</label><input id="d_boy" type="number" placeholder="165"></div>
+      <div class="field"><label>Hedef kilo (kg)</label><input id="d_hedef" type="number" placeholder="60"></div>
+    </div>
+    <div class="err" id="d_err"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+      <button class="btn" id="d_kaydet" onclick="danisanKaydet()">Oluştur</button>
+    </div>`);
+};
+window.danisanKaydet=async function(){
+  const ad=$('d_ad').value.trim(), kadi=$('d_kadi').value.trim(), sifre=$('d_sifre').value;
+  const boy=parseFloat($('d_boy').value)||null, hedef=parseFloat($('d_hedef').value)||null;
+  const err=$('d_err'); err.textContent='';
+  if(!ad||!kadi||!sifre){ err.textContent='Ad, kullanıcı adı ve şifre zorunlu.'; return; }
+  if(sifre.length<6){ err.textContent='Şifre en az 6 karakter olmalı.'; return; }
+  const btn=$('d_kaydet'); btn.disabled=true; btn.textContent='Oluşturuluyor…';
+  try{
+    // ikincil app ile oluştur -> diyetisyen oturumu bozulmaz
+    const cred=await createUserWithEmailAndPassword(secondaryAuth, userToEmail(kadi), sifre);
+    const uid=cred.user.uid;
+    await setDoc(doc(db,'kullanicilar',uid),{
+      rol:'danisan', kullaniciAdi:kadi, adSoyad:ad, olusturan:state.uid,
+      boy, hedefKilo:hedef, olusturulma:Date.now(),
+      diyet:{ gunler:{}, guncelleme:Date.now() }
+    });
+    await signOut(secondaryAuth);
+    closeModal();
+    toast('Danışan eklendi', ad+' giriş yapabilir.');
+    await loadDanisanlar();
+  }catch(e){ err.textContent=authHata(e); btn.disabled=false; btn.textContent='Oluştur'; }
+};
+
+/* ---------- danışan detay (diyetisyen görünümü) ---------- */
+let aktifDanisan=null, aktifGun='Pazartesi';
+window.acDanisan=async function(id){
+  const snap=await getDoc(doc(db,'kullanicilar',id));
+  aktifDanisan={id, ...snap.data()};
+  if(!aktifDanisan.diyet) aktifDanisan.diyet={gunler:{},guncelleme:Date.now()};
+  aktifGun=HAFTA.includes(bugunGun())?bugunGun():'Pazartesi';
+  renderDanisanDetay();
+};
+function renderDanisanDetay(){
+  const d=aktifDanisan;
+  $('view').innerHTML=`
+    <button class="linkbtn" style="margin-bottom:12px;display:inline-flex;align-items:center;gap:5px" onclick="renderDiyetisyenBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Danışanlar</button>
+    <div class="section-head">
+      <h2>${esc(d.adSoyad)}</h2>
+      <button class="btn danger sm" onclick="danisanSil()">Danışanı sil</button>
+    </div>
+    <div class="subtabs">
+      <button class="active" id="st_diyet" onclick="ddTab('diyet')">Diyet listesi</button>
+      <button id="st_kilo" onclick="ddTab('kilo')">Kilo takibi</button>
+    </div>
+    <div id="ddBody"></div>`;
+  ddTab('diyet');
+}
+window.renderDiyetisyenBack=function(){ renderDiyetisyen(); };
+window.ddTab=function(t){
+  $('st_diyet').classList.toggle('active',t==='diyet');
+  $('st_kilo').classList.toggle('active',t==='kilo');
+  if(t==='diyet') renderDiyetEditor(); else renderKiloGorunum(aktifDanisan, true);
+};
+
+function renderDiyetEditor(){
+  const g=aktifDanisan.diyet.gunler;
+  $('ddBody').innerHTML=`
+    <div class="daytabs" id="dayTabs">
+      ${HAFTA.map(day=>`<button class="${day===aktifGun?'active':''} ${day===bugunGun()?'today':''}" onclick="setGun('${day}')">${day.slice(0,3)}</button>`).join('')}
+    </div>
+    <div id="mealEditor"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn ghost" onclick="ogunEkle()">+ Öğün ekle</button>
+      <button class="btn ghost" onclick="haftayaKopyala()">Bu günü tüm haftaya kopyala</button>
+      <button class="btn" style="margin-left:auto" id="diyetKaydet" onclick="diyetKaydet()">Kaydet</button>
+    </div>`;
+  cizMealEditor();
+}
+window.setGun=function(day){ aktifGun=day; renderDiyetEditor(); };
+
+function cizMealEditor(){
+  const list=aktifDanisan.diyet.gunler[aktifGun]||[];
+  const box=$('mealEditor');
+  if(!list.length){ box.innerHTML=`<div class="empty" style="padding:30px">Bu gün için öğün yok. “Öğün ekle” ile başla.</div>`; return; }
+  box.innerHTML=list.map((m,i)=>`
+    <div class="meal">
+      <div class="mhead">
+        <input type="time" value="${esc(m.saat||'')}" style="width:120px;padding:7px 10px;border:1px solid var(--line);border-radius:9px"
+          onchange="ogunGuncelle(${i},'saat',this.value)">
+        <input value="${esc(m.ad||'')}" placeholder="Öğün adı (Kahvaltı, Ara öğün…)" style="flex:1;padding:7px 11px;border:1px solid var(--line);border-radius:9px"
+          oninput="ogunGuncelle(${i},'ad',this.value)">
+        <button class="btn danger sm" onclick="ogunSil(${i})">Sil</button>
+      </div>
+      <textarea rows="3" placeholder="İçerik: 2 yumurta, 1 dilim tam buğday ekmeği, 5 zeytin…"
+        style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;resize:vertical"
+        oninput="ogunGuncelle(${i},'icerik',this.value)">${esc(m.icerik||'')}</textarea>
+    </div>`).join('');
+}
+function gunListesi(){ if(!aktifDanisan.diyet.gunler[aktifGun]) aktifDanisan.diyet.gunler[aktifGun]=[]; return aktifDanisan.diyet.gunler[aktifGun]; }
+window.ogunEkle=function(){ gunListesi().push({ad:'',saat:'',icerik:''}); cizMealEditor(); };
+window.ogunSil=function(i){ gunListesi().splice(i,1); cizMealEditor(); };
+window.ogunGuncelle=function(i,k,val){ gunListesi()[i][k]=val; };
+window.haftayaKopyala=function(){
+  const kaynak=JSON.parse(JSON.stringify(aktifDanisan.diyet.gunler[aktifGun]||[]));
+  HAFTA.forEach(day=>{ aktifDanisan.diyet.gunler[day]=JSON.parse(JSON.stringify(kaynak)); });
+  toast('Kopyalandı', aktifGun+' planı tüm güne uygulandı.');
+};
+window.diyetKaydet=async function(){
+  const btn=$('diyetKaydet'); btn.disabled=true; btn.textContent='Kaydediliyor…';
+  // saate göre sırala
+  HAFTA.forEach(day=>{
+    if(aktifDanisan.diyet.gunler[day]) aktifDanisan.diyet.gunler[day].sort((a,b)=>(saatToMin(a.saat)??9999)-(saatToMin(b.saat)??9999));
+  });
+  aktifDanisan.diyet.guncelleme=Date.now();
+  try{
+    await updateDoc(doc(db,'kullanicilar',aktifDanisan.id),{ diyet:aktifDanisan.diyet });
+    toast('Kaydedildi','Diyet listesi danışana iletildi.');
+    renderDiyetEditor();
+  }catch(e){ toast('Hata',authHata(e)); btn.disabled=false; btn.textContent='Kaydet'; }
+};
+window.danisanSil=function(){
+  modal(`<h3>Danışanı sil</h3>
+    <div class="sub">${esc(aktifDanisan.adSoyad)} ve verileri panelden kaldırılacak. (Giriş hesabı Firebase konsolundan ayrıca silinmeli.)</div>
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+    <button class="btn danger" onclick="danisanSilOnay()">Evet, sil</button></div>`);
+};
+window.danisanSilOnay=async function(){
+  try{ await deleteDoc(doc(db,'kullanicilar',aktifDanisan.id)); closeModal(); renderDiyetisyen(); toast('Silindi'); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+
+/* =====================================================================
+   DANIŞAN PANELİ
+   ===================================================================== */
+let danisanProfil=null;
+async function renderDanisan(){
+  danisanProfil=state.profil;
+  $('view').innerHTML=`
+    <div class="subtabs">
+      <button class="active" id="ct_bugun" onclick="cTab('bugun')">Bugün</button>
+      <button id="ct_hafta" onclick="cTab('hafta')">Haftalık plan</button>
+      <button id="ct_kilo" onclick="cTab('kilo')">Kilo takibim</button>
+    </div>
+    <div id="cBody"></div>`;
+  cTab('bugun');
+}
+window.cTab=function(t){
+  ['bugun','hafta','kilo'].forEach(x=>$('ct_'+x).classList.toggle('active',x===t));
+  if(t==='bugun') renderBugun();
+  else if(t==='hafta') renderHafta();
+  else renderKiloGorunum(danisanProfil, false);
+};
+
+function bildirimDurumText(){
+  if(!('Notification' in window)) return null;
+  return Notification.permission;
+}
+function renderBugun(){
+  const gun=bugunGun();
+  const list=(danisanProfil.diyet&&danisanProfil.diyet.gunler&&danisanProfil.diyet.gunler[gun])||[];
+  const perm=bildirimDurumText();
+  let notice='';
+  if(perm!=='granted'){
+    notice=`<div class="notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <div>Öğün saatine ${BILDIRIM_DK} dk kala uyarı almak için bildirimleri aç.
+      <button class="linkbtn" onclick="bildirimIste()">Bildirimleri aç</button>
+      <br><span class="muted">Not: Uyarılar sayfa açıkken çalışır.</span></div>
+    </div>`;
+  }
+  $('cBody').innerHTML=`
+    ${notice}
+    <div class="section-head"><h2>${gun}</h2><span class="pill green">${list.length} öğün</span></div>
+    <div id="todayMeals"></div>`;
+  cizBugun();
+}
+function cizBugun(){
+  const gun=bugunGun();
+  const list=(danisanProfil.diyet&&danisanProfil.diyet.gunler&&danisanProfil.diyet.gunler[gun])||[];
+  const box=$('todayMeals'); if(!box) return;
+  if(!list.length){ box.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg><div>Bugün için diyet listesi henüz paylaşılmadı.</div></div>`; return; }
+  const n=nowMin();
+  box.innerHTML=list.map(m=>{
+    const mm=saatToMin(m.saat);
+    const soon = mm!=null && mm-n>=0 && mm-n<=BILDIRIM_DK;
+    return `<div class="meal-view ${soon?'soon':''}">
+      <div class="clock"><div class="t">${esc(m.saat||'--:--')}</div><div class="lbl">${soon?'yaklaşıyor':''}</div></div>
+      <div class="body"><div class="nm">${esc(m.ad||'Öğün')}</div><div class="ic">${esc(m.icerik||'')}</div></div>
+    </div>`;
+  }).join('');
+}
+window.bildirimIste=async function(){
+  if(!('Notification' in window)){ toast('Desteklenmiyor','Tarayıcın bildirimi desteklemiyor.'); return; }
+  const p=await Notification.requestPermission();
+  if(p==='granted'){ toast('Bildirimler açık','Öğün saatine yaklaşınca seni uyaracağım.'); }
+  renderBugun();
+};
+
+function renderHafta(){
+  const g=(danisanProfil.diyet&&danisanProfil.diyet.gunler)||{};
+  $('cBody').innerHTML=`<div class="section-head"><h2>Haftalık plan</h2></div>`+
+    HAFTA.map(day=>{
+      const list=g[day]||[];
+      return `<div class="card pad" style="margin-bottom:14px">
+        <h3 style="font-size:18px;margin-bottom:${list.length?'12px':'0'}">${day} ${day===bugunGun()?'<span class="pill orange">bugün</span>':''}</h3>
+        ${list.length? list.map(m=>`<div class="meal-view"><div class="clock"><div class="t">${esc(m.saat||'--:--')}</div></div><div class="body"><div class="nm">${esc(m.ad||'Öğün')}</div><div class="ic">${esc(m.icerik||'')}</div></div></div>`).join('')
+          : '<div class="muted">Plan yok.</div>'}
+      </div>`;
+    }).join('');
+}
+
+/* =====================================================================
+   KİLO TAKİBİ  (hem danışan hem diyetisyen görünümü)
+   ===================================================================== */
+async function renderKiloGorunum(profil, saltOkunur){
+  const box = saltOkunur ? $('ddBody') : $('cBody');
+  box.innerHTML=`<div class="empty">Yükleniyor…</div>`;
+  const snap=await getDocs(collection(db,'kullanicilar',profil.id,'kilolar'));
+  let kayitlar=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.tarih<b.tarih?-1:1);
+
+  const son=kayitlar[kayitlar.length-1];
+  const ilk=kayitlar[0];
+  const hedef=profil.hedefKilo;
+  const boy=profil.boy;
+  let bmi=null;
+  if(son&&boy){ const m=boy/100; bmi=(son.kilo/(m*m)).toFixed(1); }
+  const degisim = (son&&ilk)?(son.kilo-ilk.kilo):null;
+
+  box.innerHTML=`
+    <div class="stats">
+      <div class="stat"><div class="v">${son?son.kilo:'—'}<small> kg</small></div><div class="k">Güncel kilo</div></div>
+      <div class="stat"><div class="v">${hedef??'—'}<small> kg</small></div><div class="k">Hedef</div></div>
+      <div class="stat"><div class="v" style="color:${degisim==null?'var(--ink)':degisim<=0?'var(--primary)':'var(--accent)'}">${degisim==null?'—':(degisim>0?'+':'')+degisim.toFixed(1)}<small> kg</small></div><div class="k">Toplam değişim</div></div>
+      <div class="stat"><div class="v">${bmi??'—'}</div><div class="k">VKİ${bmi?' ('+bmiKategori(bmi)+')':''}</div></div>
+    </div>
+    ${kayitlar.length>=2?`<div class="card pad" style="margin-bottom:18px"><div class="chart-wrap">${cizChart(kayitlar,hedef)}</div></div>`:''}
+    ${!saltOkunur?`
+      <div class="card pad" style="margin-bottom:18px">
+        <h3 style="font-size:17px;margin-bottom:12px">Yeni ölçüm ekle</h3>
+        <div class="row">
+          <div class="field"><label>Tarih</label><input id="k_tarih" type="date" value="${bugunISO()}"></div>
+          <div class="field"><label>Kilo (kg)</label><input id="k_kilo" type="number" step="0.1" placeholder="68.5"></div>
+        </div>
+        <div class="field"><label>Not (opsiyonel)</label><input id="k_not" placeholder="kısa not"></div>
+        <button class="btn" onclick="kiloEkle('${profil.id}')">Kaydet</button>
+      </div>`:''}
+    <div class="card pad">
+      <h3 style="font-size:17px;margin-bottom:8px">Ölçüm geçmişi</h3>
+      <div id="kiloListe"></div>
+    </div>`;
+  cizKiloListe(kayitlar, saltOkunur, profil.id);
+}
+function bmiKategori(b){ b=+b; if(b<18.5)return'zayıf'; if(b<25)return'normal'; if(b<30)return'fazla'; return'obez'; }
+
+function cizKiloListe(kayitlar, saltOkunur, profilId){
+  const box=$('kiloListe');
+  if(!kayitlar.length){ box.innerHTML='<div class="muted">Henüz ölçüm yok.</div>'; return; }
+  const rev=[...kayitlar].reverse();
+  box.innerHTML=rev.map((k,i)=>{
+    const onceki=rev[i+1];
+    const d=onceki?(k.kilo-onceki.kilo):null;
+    return `<div class="wlog">
+      <div class="d">${trTarih(k.tarih)}</div>
+      <div class="kg">${k.kilo} kg</div>
+      ${k.not?`<div class="muted" style="font-size:13px">${esc(k.not)}</div>`:''}
+      ${d!=null?`<div class="delta ${d<=0?'down':'up'}">${d>0?'+':''}${d.toFixed(1)} kg</div>`:'<div class="delta muted">başlangıç</div>'}
+      ${!saltOkunur?`<button class="btn danger sm" onclick="kiloSil('${profilId}','${k.id}')">×</button>`:''}
+    </div>`;
+  }).join('');
+}
+window.kiloEkle=async function(profilId){
+  const tarih=$('k_tarih').value, kilo=parseFloat($('k_kilo').value);
+  if(!tarih||!kilo){ toast('Eksik','Tarih ve kilo gerekli.'); return; }
+  await addDoc(collection(db,'kullanicilar',profilId,'kilolar'),{ tarih, kilo, not:$('k_not').value.trim(), olusturulma:Date.now() });
+  toast('Eklendi', kilo+' kg kaydedildi.');
+  renderKiloGorunum(state.profil.rol==='diyetisyen'?aktifDanisan:danisanProfil, state.profil.rol==='diyetisyen');
+};
+window.kiloSil=async function(profilId,id){
+  await deleteDoc(doc(db,'kullanicilar',profilId,'kilolar',id));
+  renderKiloGorunum(state.profil.rol==='diyetisyen'?aktifDanisan:danisanProfil, state.profil.rol==='diyetisyen');
+};
+
+/* basit SVG çizgi grafik */
+function cizChart(kayitlar, hedef){
+  const W=600,H=200,pad=34;
+  const vals=kayitlar.map(k=>k.kilo);
+  let min=Math.min(...vals), max=Math.max(...vals);
+  if(hedef!=null){ min=Math.min(min,hedef); max=Math.max(max,hedef); }
+  if(min===max){ min-=1; max+=1; }
+  const rng=max-min;
+  const x=i=>pad+(kayitlar.length===1?0:i*(W-2*pad)/(kayitlar.length-1));
+  const y=v=>H-pad-((v-min)/rng)*(H-2*pad);
+  const pts=kayitlar.map((k,i)=>`${x(i)},${y(k.kilo)}`).join(' ');
+  const area=`${pad},${H-pad} ${pts} ${x(kayitlar.length-1)},${H-pad}`;
+  let hedefLine='';
+  if(hedef!=null) hedefLine=`<line x1="${pad}" y1="${y(hedef)}" x2="${W-pad}" y2="${y(hedef)}" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${W-pad}" y="${y(hedef)-5}" text-anchor="end" font-size="11" fill="var(--accent)">hedef ${hedef}</text>`;
+  const dots=kayitlar.map((k,i)=>`<circle cx="${x(i)}" cy="${y(k.kilo)}" r="3.5" fill="var(--primary)"/>`).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="${area}" fill="var(--primary-soft)" opacity="0.6"/>
+    <polyline points="${pts}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${hedefLine}${dots}
+    <text x="${pad}" y="14" font-size="11" fill="var(--ink-soft)">${max.toFixed(1)} kg</text>
+    <text x="${pad}" y="${H-pad+16}" font-size="11" fill="var(--ink-soft)">${min.toFixed(1)} kg</text>
+  </svg>`;
+}
+
+/* =====================================================================
+   ÖĞÜN BİLDİRİMLERİ  (danışan, sayfa açıkken)
+   ===================================================================== */
+let reminderTimer=null;
+function startReminders(){
+  stopReminders();
+  reminderTimer=setInterval(reminderCheck, 30000);
+  reminderCheck();
+}
+function stopReminders(){ if(reminderTimer){ clearInterval(reminderTimer); reminderTimer=null; } }
+function reminderCheck(){
+  if(!danisanProfil||!danisanProfil.diyet) return;
+  // bugün görünümündeyse "yaklaşıyor" rozetlerini tazele
+  if($('todayMeals')) cizBugun();
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const gun=bugunGun();
+  const list=(danisanProfil.diyet.gunler&&danisanProfil.diyet.gunler[gun])||[];
+  const n=nowMin(); const iso=bugunISO();
+  list.forEach((m,i)=>{
+    const mm=saatToMin(m.saat); if(mm==null) return;
+    const diff=mm-n;
+    if(diff>=0 && diff<=BILDIRIM_DK){
+      const key=`bldr_${iso}_${gun}_${i}_${m.saat}`;
+      if(localStorage.getItem(key)) return;
+      localStorage.setItem(key,'1');
+      const baslik=`${m.ad||'Öğün'} zamanı yaklaşıyor`;
+      const govde=`${m.saat} · ${(m.icerik||'').slice(0,80)}`;
+      try{ new Notification(baslik,{body:govde,tag:key}); }catch(e){}
+      toast(baslik, govde, 'meal');
+    }
+  });
+}
+
+</script>
+</body>
+</html>
