@@ -367,11 +367,29 @@ window.handleAdminLogin=async function(){
 onAuthStateChanged(auth, async (user)=>{
   if(!user){ state.uid=null; state.profil=null; showLogin(); return; }
   state.uid=user.uid;
-  const snap=await getDoc(doc(db,'kullanicilar',user.uid));
-  if(!snap.exists()){ await signOut(auth); return; }
-  state.profil={ id:user.uid, ...snap.data() };
-  showApp();
+  try{
+    const snap=await getDoc(doc(db,'kullanicilar',user.uid));
+    if(!snap.exists()){
+      await signOut(auth);
+      showLogin();
+      loginMesaj('Giriş başarılı ama bu kullanıcı için profil kaydı yok. Firestore → kullanicilar altında, Document ID olarak bu kullanıcının UID\'i ile bir belge oluştur (rol, kullaniciAdi, adSoyad).');
+      return;
+    }
+    state.profil={ id:user.uid, ...snap.data() };
+    showApp();
+  }catch(e){
+    try{ await signOut(auth); }catch(_){}
+    showLogin();
+    const c=(e&&e.code)||(e&&e.message)||'hata';
+    loginMesaj('Profil okunamadı ('+c+'). Firestore kurallarını Publish ettin mi?');
+  }
 });
+function loginMesaj(msg){
+  setTimeout(()=>{
+    const el = location.hash.toLowerCase()==='#admin' ? $('adminErr') : $('loginErr');
+    if(el) el.textContent=msg;
+  },60);
+}
 
 function showLogin(){
   stopReminders();
@@ -612,6 +630,7 @@ function cizMealEditor(){
           onchange="ogunGuncelle(${i},'saat',this.value)">
         <input value="${esc(m.ad||'')}" placeholder="Öğün adı (Kahvaltı, Ara öğün…)" style="flex:1;padding:7px 11px;border:1px solid var(--line);border-radius:9px"
           oninput="ogunGuncelle(${i},'ad',this.value)">
+        <button class="btn ghost sm" onclick="ogunKopyalaModal(${i})">Kopyala</button>
         <button class="btn danger sm" onclick="ogunSil(${i})">Sil</button>
       </div>
       <textarea rows="3" placeholder="İçerik: 2 yumurta, 1 dilim tam buğday ekmeği, 5 zeytin…"
@@ -623,6 +642,38 @@ function gunListesi(){ if(!aktifDanisan.diyet.gunler[aktifGun]) aktifDanisan.diy
 window.ogunEkle=function(){ gunListesi().push({ad:'',saat:'',icerik:''}); cizMealEditor(); };
 window.ogunSil=function(i){ gunListesi().splice(i,1); cizMealEditor(); };
 window.ogunGuncelle=function(i,k,val){ gunListesi()[i][k]=val; };
+window.ogunKopyalaModal=function(i){
+  const m=gunListesi()[i];
+  modal(`
+    <h3>Öğünü kopyala</h3>
+    <div class="sub">“${esc(m.ad||'Öğün')}” (${esc(m.saat||'--:--')}) — hangi gün(ler)e eklensin?</div>
+    <div id="kopyaGunler" style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px">
+      ${HAFTA.map(d=>`<label style="display:flex;align-items:center;gap:10px;font-size:15px;cursor:${d===aktifGun?'default':'pointer'};padding:7px 8px;border-radius:9px;${d===aktifGun?'opacity:.5':''}">
+        <input type="checkbox" value="${d}" ${d===aktifGun?'disabled':''} style="width:18px;height:18px;accent-color:var(--primary)">
+        ${d}${d===aktifGun?' <span class="muted">(şu anki gün)</span>':''}</label>`).join('')}
+    </div>
+    <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;margin-bottom:16px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:12px">
+      <input type="checkbox" onchange="kopyaHepsiToggle(this.checked)" style="width:18px;height:18px;accent-color:var(--primary)"> Diğer tüm günleri seç
+    </label>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+      <button class="btn" onclick="ogunKopyalaUygula(${i})">Kopyala</button>
+    </div>`);
+};
+window.kopyaHepsiToggle=function(checked){
+  document.querySelectorAll('#kopyaGunler input[type=checkbox]').forEach(cb=>{ if(!cb.disabled) cb.checked=checked; });
+};
+window.ogunKopyalaUygula=function(i){
+  const m=gunListesi()[i];
+  const secili=[...document.querySelectorAll('#kopyaGunler input[type=checkbox]:checked')].map(cb=>cb.value);
+  if(!secili.length){ toast('Seçim yok','En az bir gün seç.'); return; }
+  secili.forEach(day=>{
+    if(!aktifDanisan.diyet.gunler[day]) aktifDanisan.diyet.gunler[day]=[];
+    aktifDanisan.diyet.gunler[day].push(JSON.parse(JSON.stringify(m)));
+  });
+  closeModal();
+  toast('Kopyalandı', `${m.ad||'Öğün'} → ${secili.length} güne eklendi. “Kaydet”e basmayı unutma.`);
+};
 window.haftayaKopyala=function(){
   const kaynak=JSON.parse(JSON.stringify(aktifDanisan.diyet.gunler[aktifGun]||[]));
   HAFTA.forEach(day=>{ aktifDanisan.diyet.gunler[day]=JSON.parse(JSON.stringify(kaynak)); });
