@@ -128,6 +128,45 @@
   .meal-view .body .ic{white-space:pre-wrap;color:var(--ink-soft);font-size:14.5px}
   .meal-view.soon{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
   .meal-view.soon .body{border-color:var(--accent)}
+  .meal-view.done{background:var(--primary-soft);border-color:#bcd9c6}
+  .meal-view.done .body{border-color:var(--primary)}
+  .ogun-btn{margin-top:10px;padding:6px 13px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-soft);background:var(--surface);transition:.12s}
+  .ogun-btn:hover{border-color:var(--primary)}
+  .ogun-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+  /* chat */
+  .chat{display:flex;flex-direction:column;height:62vh;min-height:380px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .bubble{max-width:78%;padding:9px 13px;border-radius:15px;font-size:14.5px;line-height:1.45;word-wrap:break-word;white-space:pre-wrap}
+  .bubble .meta{font-size:10.5px;opacity:.65;margin-top:4px}
+  .bubble.ben{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:5px}
+  .bubble.karsi{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line);border-bottom-left-radius:5px}
+  .chat-input{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:var(--surface)}
+  .chat-input input{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:999px}
+  .chat-empty{margin:auto;text-align:center;color:var(--ink-soft);font-size:14px;padding:30px}
+
+  /* floating chat widget */
+  #chatWidget{position:fixed;right:20px;bottom:20px;z-index:85}
+  #chatFab{width:58px;height:58px;border-radius:50%;background:var(--primary);color:#fff;box-shadow:0 8px 24px rgba(22,36,31,.22);display:grid;place-items:center;position:relative;transition:.15s}
+  #chatFab:hover{background:var(--primary-dark)}
+  #chatFab svg{width:26px;height:26px}
+  #chatBadge{position:absolute;top:-3px;right:-3px;min-width:21px;height:21px;padding:0 6px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;border:2px solid var(--bg)}
+  #chatPanel{position:absolute;right:0;bottom:72px;width:344px;max-width:calc(100vw - 40px);height:484px;max-height:calc(100vh - 130px);background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden}
+  .chat-head{padding:12px 14px;display:flex;align-items:center;gap:8px;background:var(--primary);color:#fff;flex:none}
+  .chat-head .ttl{font-weight:700;flex:1;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chat-head button{color:#fff;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:18px;line-height:1}
+  .chat-head button:hover{background:rgba(255,255,255,.18)}
+  .chat-head button svg{width:18px;height:18px}
+  .conv{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:.12s}
+  .conv:hover{background:var(--surface-2)}
+  .conv .nm{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conv .last{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conv.unread .last{color:var(--ink);font-weight:600}
+  .conv .ub{margin-left:auto;flex:none;background:var(--accent);color:#fff;min-width:21px;height:21px;border-radius:999px;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 6px}
+  @media(max-width:560px){
+    #chatWidget{right:14px;bottom:14px}
+    #chatPanel{width:calc(100vw - 28px);height:70vh}
+  }
 
   .empty{text-align:center;padding:46px 20px;color:var(--ink-soft)}
   .empty svg{width:42px;height:42px;opacity:.5;margin-bottom:10px}
@@ -253,6 +292,15 @@
   <div class="container" id="view"></div>
 </div>
 
+<!-- yüzen mesaj balonu (Messenger tarzı) -->
+<div id="chatWidget" class="hidden">
+  <div id="chatPanel" class="hidden"></div>
+  <button id="chatFab" onclick="chatToggle()" aria-label="Mesajlar">
+    <svg id="chatFabIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg>
+    <span id="chatBadge" class="hidden">0</span>
+  </button>
+</div>
+
 <div id="modalRoot"></div>
 <div id="toasts"></div>
 
@@ -260,7 +308,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, where }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 /* =====================================================================
@@ -277,6 +325,9 @@ const firebaseConfig = {
 };
 const BILDIRIM_DK = 15;   // öğüne kaç dakika kala uyarı verilsin
 const EPOSTA_SONEKI = "@diyet.local"; // kullanıcı adı -> sahte e-posta dönüşümü
+// FCM push (arka plan bildirimi) — yalnızca https'te (Vercel) çalışır
+const VAPID_KEY = "BGG2-fJNF7kP4opttfoaAk2aEojyQCt_g5WJvIQ2_6W-SFFyQO_KB7c-AVsYVBzujFOtcJltgBOebD7vTGPi0QA"; // Firebase Console > Cloud Messaging > Web Push certificates
+const PUSH_API  = "/api/push";        // mesaj bildirimi gönderen Vercel fonksiyonu
 
 /* ===================================================================== */
 
@@ -393,6 +444,7 @@ function loginMesaj(msg){
 
 function showLogin(){
   stopReminders();
+  chatDur();
   $('app').classList.add('hidden');
   $('login').classList.remove('hidden');
   // #admin varsa admin giriş kartını göster, yoksa normal
@@ -407,9 +459,10 @@ function showApp(){
   $('topWho').textContent=state.profil.adSoyad||state.profil.kullaniciAdi;
   const r=state.profil.rol;
   $('topRole').textContent = r==='admin'?'Admin' : r==='diyetisyen'?'Diyetisyen':'Danışan';
+  chatDur(); // admin için gizli kalır
   if(r==='admin') renderAdmin();
-  else if(r==='diyetisyen') renderDiyetisyen();
-  else { renderDanisan(); startReminders(); }
+  else if(r==='diyetisyen'){ renderDiyetisyen(); chatBaslat('diyetisyen'); pushBaslat(); }
+  else { renderDanisan(); startReminders(); chatBaslat('danisan'); pushBaslat(); }
 }
 window.logout=async function(){ await signOut(auth); };
 
@@ -568,6 +621,7 @@ window.danisanKaydet=async function(){
     closeModal();
     toast('Danışan eklendi', ad+' giriş yapabilir.');
     await loadDanisanlar();
+    if(chatRol==='diyetisyen') chatBaslat('diyetisyen');
   }catch(e){ err.textContent=authHata(e); btn.disabled=false; btn.textContent='Oluştur'; }
 };
 
@@ -591,21 +645,28 @@ function renderDanisanDetay(){
     </div>
     <div class="subtabs">
       <button class="active" id="st_diyet" onclick="ddTab('diyet')">Diyet listesi</button>
-      <button id="st_kilo" onclick="ddTab('kilo')">Kilo takibi</button>
+      <button id="st_uyum" onclick="ddTab('uyum')">Uyum</button>
+      <button id="st_olcu" onclick="ddTab('olcu')">Kilo & ölçü</button>
     </div>
     <div id="ddBody"></div>`;
   ddTab('diyet');
 }
 window.renderDiyetisyenBack=function(){ renderDiyetisyen(); };
 window.ddTab=function(t){
-  $('st_diyet').classList.toggle('active',t==='diyet');
-  $('st_kilo').classList.toggle('active',t==='kilo');
-  if(t==='diyet') renderDiyetEditor(); else renderKiloGorunum(aktifDanisan, true);
+  ['diyet','uyum','olcu'].forEach(x=>{ const b=$('st_'+x); if(b) b.classList.toggle('active',x===t); });
+  if(t==='diyet') renderDiyetEditor();
+  else if(t==='uyum') renderUyum(aktifDanisan);
+  else renderKiloGorunum(aktifDanisan, true);
 };
 
 function renderDiyetEditor(){
   const g=aktifDanisan.diyet.gunler;
   $('ddBody').innerHTML=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+      <input type="file" id="csvInput" accept=".csv,text/csv" class="hidden" onchange="csvDosyaSec(event)">
+      <button class="btn ghost sm" onclick="document.getElementById('csvInput').click()">⬆ Excel/CSV içe aktar</button>
+      <button class="btn ghost sm" onclick="csvSablonIndir()">⬇ Örnek şablon</button>
+    </div>
     <div class="daytabs" id="dayTabs">
       ${HAFTA.map(day=>`<button class="${day===aktifGun?'active':''} ${day===bugunGun()?'today':''}" onclick="setGun('${day}')">${day.slice(0,3)}</button>`).join('')}
     </div>
@@ -618,6 +679,104 @@ function renderDiyetEditor(){
   cizMealEditor();
 }
 window.setGun=function(day){ aktifGun=day; renderDiyetEditor(); };
+
+/* ---------- CSV içe aktarma ---------- */
+function fold(s){
+  return String(s||'').trim().replace(/ı/g,'i').replace(/İ/g,'I')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function gunBul(raw){
+  const t={ 'pazartesi':'Pazartesi','pzt':'Pazartesi','pt':'Pazartesi',
+    'sali':'Salı','sal':'Salı','sl':'Salı',
+    'carsamba':'Çarşamba','car':'Çarşamba','crs':'Çarşamba','crş':'Çarşamba',
+    'persembe':'Perşembe','per':'Perşembe','prş':'Perşembe',
+    'cuma':'Cuma','cum':'Cuma',
+    'cumartesi':'Cumartesi','cmt':'Cumartesi','cts':'Cumartesi',
+    'pazar':'Pazar','paz':'Pazar','pz':'Pazar' };
+  return t[fold(raw)]||null;
+}
+function parseCSV(text){
+  text=text.replace(/^\uFEFF/,'');
+  const firstLine=text.split(/\r?\n/)[0]||'';
+  const delim=(firstLine.split(';').length>firstLine.split(',').length)?';':',';
+  const rows=[]; let row=[],cur='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else inQ=false; }
+      else cur+=c;
+    }else{
+      if(c==='"') inQ=true;
+      else if(c===delim){ row.push(cur); cur=''; }
+      else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
+      else if(c==='\r'){/* yoksay */}
+      else cur+=c;
+    }
+  }
+  if(cur!==''||row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r=>r.some(c=>(c||'').trim()!==''));
+}
+function csvCozumle(text){
+  const rows=parseCSV(text);
+  if(!rows.length) return {hata:'Dosya boş görünüyor.'};
+  let start=0;
+  if(!gunBul(rows[0][0]) && /gun|saat|ogun|icerik/.test(fold(rows[0].join(' ')))) start=1;
+  const gunler={}; let say=0; const atlanan=[];
+  for(let i=start;i<rows.length;i++){
+    const r=rows[i];
+    const gun=gunBul(r[0]);
+    if(!gun){ if((r[0]||'').trim()) atlanan.push(r[0].trim()); continue; }
+    const saat=(r[1]||'').trim(), ad=(r[2]||'').trim(), icerik=(r[3]||'').trim();
+    if(!saat&&!ad&&!icerik) continue;
+    (gunler[gun]=gunler[gun]||[]).push({ad,saat,icerik}); say++;
+  }
+  return {gunler,say,atlanan,gunSayisi:Object.keys(gunler).length};
+}
+let pendingCSV=null;
+window.csvDosyaSec=function(e){
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const rdr=new FileReader();
+  rdr.onload=()=>{ csvIslem(rdr.result); e.target.value=''; };
+  rdr.onerror=()=>{ toast('Hata','Dosya okunamadı.'); e.target.value=''; };
+  rdr.readAsText(f,'UTF-8');
+};
+function csvIslem(text){
+  const res=csvCozumle(text);
+  if(res.hata){ toast('Hata',res.hata); return; }
+  if(!res.say){ toast('Aktarılamadı','Geçerli satır bulunamadı. İlk sütundaki gün adlarını kontrol et.'); return; }
+  pendingCSV=res;
+  const benzersizAtlanan=[...new Set(res.atlanan)];
+  modal(`<h3>CSV içe aktar</h3>
+    <div class="sub">${res.say} öğün, ${res.gunSayisi} gün bulundu: ${esc(Object.keys(res.gunler).join(', '))}.</div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+      <div>Yukarıdaki günlerin mevcut planı CSV ile <b>değiştirilecek</b>. CSV'de olmayan günler korunur.</div></div>
+    ${benzersizAtlanan.length?`<div class="muted" style="margin-bottom:14px">Tanınmayan gün adı olan ${res.atlanan.length} satır atlandı: ${esc(benzersizAtlanan.slice(0,6).join(', '))}${benzersizAtlanan.length>6?'…':''}</div>`:''}
+    <div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+    <button class="btn" onclick="csvUygula()">İçe aktar</button></div>`);
+}
+window.csvUygula=function(){
+  if(!pendingCSV) return;
+  Object.entries(pendingCSV.gunler).forEach(([gun,list])=>{
+    list.sort((a,b)=>(saatToMin(a.saat)??9999)-(saatToMin(b.saat)??9999));
+    aktifDanisan.diyet.gunler[gun]=list;
+  });
+  pendingCSV=null; closeModal(); renderDiyetEditor();
+  toast('Aktarıldı','CSV içe aktarıldı. “Kaydet”e basmayı unutma.');
+};
+window.csvSablonIndir=function(){
+  const ornek='Gün;Saat;Öğün;İçerik\n'
+    +'Pazartesi;08:00;Kahvaltı;2 yumurta, 1 dilim tam buğday ekmeği, 5 zeytin\n'
+    +'Pazartesi;10:30;Ara Öğün;1 elma, 5 badem\n'
+    +'Pazartesi;13:00;Öğle;Izgara tavuk göğsü, bol salata, 4 yk bulgur pilavı\n'
+    +'Pazartesi;16:00;Ara Öğün;1 kase yoğurt\n'
+    +'Pazartesi;19:00;Akşam;Sebze yemeği, 1 dilim ekmek, cacık\n'
+    +'Salı;08:00;Kahvaltı;Peynir, domates, salatalık, 1 dilim ekmek\n'
+    +'Salı;13:00;Öğle;Mercimek çorbası, ızgara köfte, salata\n';
+  const blob=new Blob(['\uFEFF'+ornek],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='diyet-sablon.csv'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
 
 function cizMealEditor(){
   const list=aktifDanisan.diyet.gunler[aktifGun]||[];
@@ -713,15 +872,17 @@ async function renderDanisan(){
     <div class="subtabs">
       <button class="active" id="ct_bugun" onclick="cTab('bugun')">Bugün</button>
       <button id="ct_hafta" onclick="cTab('hafta')">Haftalık plan</button>
-      <button id="ct_kilo" onclick="cTab('kilo')">Kilo takibim</button>
+      <button id="ct_su" onclick="cTab('su')">Su takibi</button>
+      <button id="ct_kilo" onclick="cTab('kilo')">Kilo & ölçü</button>
     </div>
     <div id="cBody"></div>`;
   cTab('bugun');
 }
 window.cTab=function(t){
-  ['bugun','hafta','kilo'].forEach(x=>$('ct_'+x).classList.toggle('active',x===t));
+  ['bugun','hafta','su','kilo'].forEach(x=>$('ct_'+x).classList.toggle('active',x===t));
   if(t==='bugun') renderBugun();
   else if(t==='hafta') renderHafta();
+  else if(t==='su') renderSu();
   else renderKiloGorunum(danisanProfil, false);
 };
 
@@ -729,7 +890,8 @@ function bildirimDurumText(){
   if(!('Notification' in window)) return null;
   return Notification.permission;
 }
-function renderBugun(){
+let ogunYapilan=[];
+async function renderBugun(){
   const gun=bugunGun();
   const list=(danisanProfil.diyet&&danisanProfil.diyet.gunler&&danisanProfil.diyet.gunler[gun])||[];
   const perm=bildirimDurumText();
@@ -742,9 +904,14 @@ function renderBugun(){
       <br><span class="muted">Not: Uyarılar sayfa açıkken çalışır.</span></div>
     </div>`;
   }
+  ogunYapilan=[];
+  try{
+    const s=await getDoc(doc(db,'kullanicilar',danisanProfil.id,'ogun',bugunISO()));
+    if(s.exists()) ogunYapilan=(s.data().yapilan||[]).filter(i=>i<list.length);
+  }catch(e){}
   $('cBody').innerHTML=`
     ${notice}
-    <div class="section-head"><h2>${gun}</h2><span class="pill green">${list.length} öğün</span></div>
+    <div class="section-head"><h2>${gun}</h2><span class="pill green" id="ogunPill"></span></div>
     <div id="todayMeals"></div>`;
   cizBugun();
 }
@@ -752,17 +919,34 @@ function cizBugun(){
   const gun=bugunGun();
   const list=(danisanProfil.diyet&&danisanProfil.diyet.gunler&&danisanProfil.diyet.gunler[gun])||[];
   const box=$('todayMeals'); if(!box) return;
-  if(!list.length){ box.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg><div>Bugün için diyet listesi henüz paylaşılmadı.</div></div>`; return; }
+  const pill=$('ogunPill');
+  if(!list.length){ if(pill)pill.textContent='0 öğün'; box.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg><div>Bugün için diyet listesi henüz paylaşılmadı.</div></div>`; return; }
+  if(pill) pill.textContent=`${ogunYapilan.length}/${list.length} yapıldı`;
   const n=nowMin();
-  box.innerHTML=list.map(m=>{
+  box.innerHTML=list.map((m,i)=>{
     const mm=saatToMin(m.saat);
     const soon = mm!=null && mm-n>=0 && mm-n<=BILDIRIM_DK;
-    return `<div class="meal-view ${soon?'soon':''}">
+    const done=ogunYapilan.includes(i);
+    return `<div class="meal-view ${soon?'soon':''} ${done?'done':''}">
       <div class="clock"><div class="t">${esc(m.saat||'--:--')}</div><div class="lbl">${soon?'yaklaşıyor':''}</div></div>
-      <div class="body"><div class="nm">${esc(m.ad||'Öğün')}</div><div class="ic">${esc(m.icerik||'')}</div></div>
+      <div class="body">
+        <div class="nm">${esc(m.ad||'Öğün')}</div>
+        <div class="ic">${esc(m.icerik||'')}</div>
+        <button class="ogun-btn ${done?'on':''}" onclick="ogunToggle(${i})">${done?'✓ Yaptım':'Yaptım'}</button>
+      </div>
     </div>`;
   }).join('');
 }
+window.ogunToggle=async function(i){
+  const gun=bugunGun();
+  const list=(danisanProfil.diyet&&danisanProfil.diyet.gunler&&danisanProfil.diyet.gunler[gun])||[];
+  const k=ogunYapilan.indexOf(i);
+  if(k>=0) ogunYapilan.splice(k,1); else ogunYapilan.push(i);
+  cizBugun();
+  try{ await setDoc(doc(db,'kullanicilar',danisanProfil.id,'ogun',bugunISO()),
+    {yapilan:[...ogunYapilan].sort((a,b)=>a-b), toplam:list.length, guncelleme:Date.now()},{merge:true}); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
 window.bildirimIste=async function(){
   if(!('Notification' in window)){ toast('Desteklenmiyor','Tarayıcın bildirimi desteklemiyor.'); return; }
   const p=await Notification.requestPermission();
@@ -784,21 +968,150 @@ function renderHafta(){
 }
 
 /* =====================================================================
-   KİLO TAKİBİ  (hem danışan hem diyetisyen görünümü)
+   SU TAKİBİ  (danışan)
    ===================================================================== */
+const SU_KAPLAR = [
+  { ad:'Bardak', ml:250 },
+  { ad:'Pet şişe', ml:500 },
+  { ad:'Büyük şişe', ml:1000 }
+];
+let suMl=0, suHedefMl=2000, suGecmisCache=[], suStack=[];
+function suDocMl(d){ return (d.ml!=null) ? d.ml : (d.bardak? d.bardak*250 : 0); } // eski "bardak" kayıtlarıyla uyum
+async function renderSu(){
+  const box=$('cBody');
+  box.innerHTML=`<div class="empty">Yükleniyor…</div>`;
+  const iso=bugunISO();
+  suHedefMl = danisanProfil.suHedefMl || (danisanProfil.suHedef? danisanProfil.suHedef*250 : 2000);
+  suMl=0; suGecmisCache=[]; suStack=[];
+  try{
+    const s=await getDoc(doc(db,'kullanicilar',danisanProfil.id,'su',iso));
+    if(s.exists()) suMl=suDocMl(s.data());
+  }catch(e){}
+  try{
+    const snap=await getDocs(collection(db,'kullanicilar',danisanProfil.id,'su'));
+    suGecmisCache=snap.docs.map(d=>({tarih:d.id, ml:suDocMl(d.data())}))
+      .sort((a,b)=>a.tarih<b.tarih?-1:1).slice(-7);
+  }catch(e){}
+  box.innerHTML=suHTML();
+}
+function kisaGun(iso){ try{const d=new Date(iso+'T00:00'); return GUNLER[d.getDay()].slice(0,3);}catch{return (iso||'').slice(5);} }
+function suHTML(){
+  const ml=suMl, hedef=suHedefMl, gecmis=suGecmisCache;
+  const pct=Math.min(1, hedef? ml/hedef : 0);
+  const r=70, c=2*Math.PI*r, off=c*(1-pct);
+  const litre=(ml/1000).toFixed(2), hedefL=(hedef/1000).toFixed(2);
+  const yuzde=Math.round(pct*100);
+  const maxBar=Math.max(hedef, ...gecmis.map(g=>g.ml), 1);
+  const SU='#3B9ED9';
+  return `
+  <div class="section-head"><h2>Su takibi</h2><span class="pill green">%${yuzde}</span></div>
+  <div class="card pad" style="text-align:center">
+    <div style="position:relative;width:180px;height:180px;margin:0 auto 12px">
+      <svg width="180" height="180" viewBox="0 0 180 180" style="transform:rotate(-90deg)">
+        <circle cx="90" cy="90" r="${r}" fill="none" stroke="var(--primary-soft)" stroke-width="14"/>
+        <circle cx="90" cy="90" r="${r}" fill="none" stroke="${SU}" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" style="transition:stroke-dashoffset .4s"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-family:'Fraunces';font-size:34px;font-weight:600;line-height:1;color:${SU}">${litre} L</div>
+        <div class="muted" style="font-size:13px">/ ${hedefL} L</div>
+      </div>
+    </div>
+    <div class="muted" style="font-size:13px;margin-bottom:10px">Ne kadar içtin?</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">
+      ${SU_KAPLAR.map(k=>`<button class="btn ghost" style="flex-direction:column;gap:2px;min-width:96px;padding:12px 14px" onclick="suEkleMl(${k.ml})">
+        <span style="font-weight:700">${k.ad}</span><span class="muted" style="font-size:12px">+${k.ml} ml</span></button>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
+      <input id="suOzel" type="number" inputmode="numeric" placeholder="özel ml" style="width:104px;padding:9px 11px;border:1px solid var(--line);border-radius:10px">
+      <button class="btn ghost sm" onclick="suEkleOzel()">Ekle</button>
+      <button class="btn ghost sm" onclick="suGeriAl()">↶ Geri al</button>
+      <button class="btn ghost sm" onclick="suSifirla()">Sıfırla</button>
+    </div>
+  </div>
+
+  <div class="card pad" style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div><h3 style="font-size:16px">Günlük hedef</h3><div class="muted" style="font-size:13px">0,25 L adımlarla</div></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn ghost sm" onclick="suHedefDegistir(-250)">−</button>
+      <b style="min-width:72px;text-align:center">${hedefL} L</b>
+      <button class="btn ghost sm" onclick="suHedefDegistir(250)">+</button>
+    </div>
+  </div>
+
+  ${gecmis.length?`<div class="card pad" style="margin-top:14px">
+    <h3 style="font-size:16px;margin-bottom:16px">Son ${gecmis.length} gün</h3>
+    <div style="display:flex;align-items:flex-end;gap:10px;height:130px">
+      ${gecmis.map(g=>{
+        const h=Math.round((g.ml/maxBar)*88)+4;
+        const ok=g.ml>=hedef && hedef>0;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end">
+          <div style="font-size:11.5px;font-weight:700;color:var(--ink-soft)">${(g.ml/1000).toFixed(1)}</div>
+          <div style="width:100%;max-width:36px;height:${h}px;border-radius:8px 8px 4px 4px;background:${ok?SU:'var(--primary-soft)'}"></div>
+          <div style="font-size:11px;color:var(--ink-soft)">${kisaGun(g.tarih)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="muted" style="font-size:11.5px;text-align:right;margin-top:6px">litre / gün</div>
+  </div>`:''}`;
+}
+function suGecmisGuncelle(){
+  const iso=bugunISO();
+  const idx=suGecmisCache.findIndex(g=>g.tarih===iso);
+  if(idx>=0) suGecmisCache[idx].ml=suMl; else suGecmisCache.push({tarih:iso,ml:suMl});
+  suGecmisCache=suGecmisCache.sort((a,b)=>a.tarih<b.tarih?-1:1).slice(-7);
+}
+async function suYaz(){
+  try{ await setDoc(doc(db,'kullanicilar',danisanProfil.id,'su',bugunISO()),{ml:suMl,guncelleme:Date.now()},{merge:true}); }
+  catch(e){ toast('Hata',authHata(e)); }
+}
+window.suEkleMl=async function(ml){
+  if(!ml||ml<=0) return;
+  suMl=Math.max(0, suMl+ml); suStack.push(ml);
+  suGecmisGuncelle(); $('cBody').innerHTML=suHTML(); await suYaz();
+};
+window.suEkleOzel=function(){
+  const v=parseInt(($('suOzel')||{}).value,10);
+  if(!v||v<=0){ toast('Geçersiz','ml olarak bir sayı gir (örn. 300).'); return; }
+  $('suOzel').value=''; suEkleMl(v);
+};
+window.suGeriAl=async function(){
+  if(suMl<=0) return;
+  const son = suStack.length ? suStack.pop() : 250;
+  suMl=Math.max(0, suMl-son);
+  suGecmisGuncelle(); $('cBody').innerHTML=suHTML(); await suYaz();
+};
+window.suSifirla=async function(){
+  if(!suMl) return;
+  suMl=0; suStack=[];
+  suGecmisGuncelle(); $('cBody').innerHTML=suHTML(); await suYaz();
+};
+window.suHedefDegistir=async function(delta){
+  const yeni=Math.min(5000, Math.max(500, suHedefMl+delta));
+  if(yeni===suHedefMl) return;
+  suHedefMl=yeni; danisanProfil.suHedefMl=yeni; if(state.profil)state.profil.suHedefMl=yeni;
+  $('cBody').innerHTML=suHTML();
+  try{ await updateDoc(doc(db,'kullanicilar',danisanProfil.id),{suHedefMl:yeni}); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+const METRIKLER=[{key:'kilo',ad:'Kilo',unit:'kg'},{key:'bel',ad:'Bel',unit:'cm'},{key:'kalca',ad:'Kalça',unit:'cm'},{key:'kol',ad:'Kol',unit:'cm'}];
+let kiloMetrik='kilo', kiloKayitlarCache=[], kiloHedefCache=null;
+function metrikSay(kayitlar,key){ return kayitlar.filter(k=>typeof k[key]==='number'&&!isNaN(k[key])).length; }
 async function renderKiloGorunum(profil, saltOkunur){
   const box = saltOkunur ? $('ddBody') : $('cBody');
   box.innerHTML=`<div class="empty">Yükleniyor…</div>`;
   const snap=await getDocs(collection(db,'kullanicilar',profil.id,'kilolar'));
   let kayitlar=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.tarih<b.tarih?-1:1);
+  kiloKayitlarCache=kayitlar; kiloHedefCache=profil.hedefKilo; kiloMetrik='kilo';
 
-  const son=kayitlar[kayitlar.length-1];
-  const ilk=kayitlar[0];
-  const hedef=profil.hedefKilo;
-  const boy=profil.boy;
-  let bmi=null;
-  if(son&&boy){ const m=boy/100; bmi=(son.kilo/(m*m)).toFixed(1); }
+  const son=kayitlar[kayitlar.length-1], ilk=kayitlar[0];
+  const hedef=profil.hedefKilo, boy=profil.boy;
+  let bmi=null; if(son&&boy){ const m=boy/100; bmi=(son.kilo/(m*m)).toFixed(1); }
   const degisim = (son&&ilk)?(son.kilo-ilk.kilo):null;
+  const sonDeger=key=>{ for(let i=kayitlar.length-1;i>=0;i--){ if(typeof kayitlar[i][key]==='number') return kayitlar[i][key]; } return null; };
+  const olcuStat=(key,ad)=>{ const v=sonDeger(key); return v==null?'':`<div class="stat"><div class="v">${v}<small> cm</small></div><div class="k">${ad}</div></div>`; };
+  const metrikBtns=METRIKLER.filter(m=>m.key==='kilo'||metrikSay(kayitlar,m.key)>=2)
+    .map(m=>`<button class="${m.key==='kilo'?'active':''}" data-k="${m.key}" onclick="kiloMetrikDegis('${m.key}')">${m.ad}</button>`).join('');
 
   box.innerHTML=`
     <div class="stats">
@@ -806,14 +1119,23 @@ async function renderKiloGorunum(profil, saltOkunur){
       <div class="stat"><div class="v">${hedef??'—'}<small> kg</small></div><div class="k">Hedef</div></div>
       <div class="stat"><div class="v" style="color:${degisim==null?'var(--ink)':degisim<=0?'var(--primary)':'var(--accent)'}">${degisim==null?'—':(degisim>0?'+':'')+degisim.toFixed(1)}<small> kg</small></div><div class="k">Toplam değişim</div></div>
       <div class="stat"><div class="v">${bmi??'—'}</div><div class="k">VKİ${bmi?' ('+bmiKategori(bmi)+')':''}</div></div>
+      ${olcuStat('bel','Bel')}${olcuStat('kalca','Kalça')}${olcuStat('kol','Kol')}
     </div>
-    ${kayitlar.length>=2?`<div class="card pad" style="margin-bottom:18px"><div class="chart-wrap">${cizChart(kayitlar,hedef)}</div></div>`:''}
+    ${kayitlar.length>=2?`<div class="card pad" style="margin-bottom:18px">
+      ${metrikBtns?`<div class="daytabs" id="kiloMetrikBar" style="margin-bottom:14px">${metrikBtns}</div>`:''}
+      <div class="chart-wrap" id="kiloChart">${kiloChartHTML()}</div>
+    </div>`:''}
     ${!saltOkunur?`
       <div class="card pad" style="margin-bottom:18px">
         <h3 style="font-size:17px;margin-bottom:12px">Yeni ölçüm ekle</h3>
         <div class="row">
           <div class="field"><label>Tarih</label><input id="k_tarih" type="date" value="${bugunISO()}"></div>
           <div class="field"><label>Kilo (kg)</label><input id="k_kilo" type="number" step="0.1" placeholder="68.5"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Bel (cm)</label><input id="k_bel" type="number" step="0.1" placeholder="opsiyonel"></div>
+          <div class="field"><label>Kalça (cm)</label><input id="k_kalca" type="number" step="0.1" placeholder="opsiyonel"></div>
+          <div class="field"><label>Kol (cm)</label><input id="k_kol" type="number" step="0.1" placeholder="opsiyonel"></div>
         </div>
         <div class="field"><label>Not (opsiyonel)</label><input id="k_not" placeholder="kısa not"></div>
         <button class="btn" onclick="kiloEkle('${profil.id}')">Kaydet</button>
@@ -824,6 +1146,17 @@ async function renderKiloGorunum(profil, saltOkunur){
     </div>`;
   cizKiloListe(kayitlar, saltOkunur, profil.id);
 }
+function kiloChartHTML(){
+  const m=METRIKLER.find(x=>x.key===kiloMetrik)||METRIKLER[0];
+  const veri=kiloKayitlarCache.filter(k=>typeof k[m.key]==='number'&&!isNaN(k[m.key]));
+  if(veri.length<2) return `<div class="muted" style="padding:24px;text-align:center">${m.ad} için en az 2 ölçüm gerekli.</div>`;
+  return cizChart(veri, m.key, m.unit, m.key==='kilo'?kiloHedefCache:null);
+}
+window.kiloMetrikDegis=function(key){
+  kiloMetrik=key;
+  const c=$('kiloChart'); if(c) c.innerHTML=kiloChartHTML();
+  document.querySelectorAll('#kiloMetrikBar button').forEach(b=>b.classList.toggle('active', b.dataset.k===key));
+};
 function bmiKategori(b){ b=+b; if(b<18.5)return'zayıf'; if(b<25)return'normal'; if(b<30)return'fazla'; return'obez'; }
 
 function cizKiloListe(kayitlar, saltOkunur, profilId){
@@ -833,9 +1166,11 @@ function cizKiloListe(kayitlar, saltOkunur, profilId){
   box.innerHTML=rev.map((k,i)=>{
     const onceki=rev[i+1];
     const d=onceki?(k.kilo-onceki.kilo):null;
+    const olcu=[k.bel?`bel ${k.bel}`:'',k.kalca?`kalça ${k.kalca}`:'',k.kol?`kol ${k.kol}`:''].filter(Boolean).join(' · ');
     return `<div class="wlog">
       <div class="d">${trTarih(k.tarih)}</div>
       <div class="kg">${k.kilo} kg</div>
+      ${olcu?`<div class="muted" style="font-size:12.5px">${olcu}</div>`:''}
       ${k.not?`<div class="muted" style="font-size:13px">${esc(k.not)}</div>`:''}
       ${d!=null?`<div class="delta ${d<=0?'down':'up'}">${d>0?'+':''}${d.toFixed(1)} kg</div>`:'<div class="delta muted">başlangıç</div>'}
       ${!saltOkunur?`<button class="btn danger sm" onclick="kiloSil('${profilId}','${k.id}')">×</button>`:''}
@@ -845,7 +1180,12 @@ function cizKiloListe(kayitlar, saltOkunur, profilId){
 window.kiloEkle=async function(profilId){
   const tarih=$('k_tarih').value, kilo=parseFloat($('k_kilo').value);
   if(!tarih||!kilo){ toast('Eksik','Tarih ve kilo gerekli.'); return; }
-  await addDoc(collection(db,'kullanicilar',profilId,'kilolar'),{ tarih, kilo, not:$('k_not').value.trim(), olusturulma:Date.now() });
+  const kayit={ tarih, kilo, not:$('k_not').value.trim(), olusturulma:Date.now() };
+  const bel=parseFloat($('k_bel').value), kalca=parseFloat($('k_kalca').value), kol=parseFloat($('k_kol').value);
+  if(!isNaN(bel)) kayit.bel=bel;
+  if(!isNaN(kalca)) kayit.kalca=kalca;
+  if(!isNaN(kol)) kayit.kol=kol;
+  await addDoc(collection(db,'kullanicilar',profilId,'kilolar'), kayit);
   toast('Eklendi', kilo+' kg kaydedildi.');
   renderKiloGorunum(state.profil.rol==='diyetisyen'?aktifDanisan:danisanProfil, state.profil.rol==='diyetisyen');
 };
@@ -854,28 +1194,263 @@ window.kiloSil=async function(profilId,id){
   renderKiloGorunum(state.profil.rol==='diyetisyen'?aktifDanisan:danisanProfil, state.profil.rol==='diyetisyen');
 };
 
-/* basit SVG çizgi grafik */
-function cizChart(kayitlar, hedef){
+/* basit SVG çizgi grafik (herhangi bir metrik) */
+function cizChart(kayitlar, key, unit, hedef){
   const W=600,H=200,pad=34;
-  const vals=kayitlar.map(k=>k.kilo);
+  const vals=kayitlar.map(k=>k[key]);
   let min=Math.min(...vals), max=Math.max(...vals);
   if(hedef!=null){ min=Math.min(min,hedef); max=Math.max(max,hedef); }
   if(min===max){ min-=1; max+=1; }
   const rng=max-min;
   const x=i=>pad+(kayitlar.length===1?0:i*(W-2*pad)/(kayitlar.length-1));
   const y=v=>H-pad-((v-min)/rng)*(H-2*pad);
-  const pts=kayitlar.map((k,i)=>`${x(i)},${y(k.kilo)}`).join(' ');
+  const pts=kayitlar.map((k,i)=>`${x(i)},${y(k[key])}`).join(' ');
   const area=`${pad},${H-pad} ${pts} ${x(kayitlar.length-1)},${H-pad}`;
   let hedefLine='';
   if(hedef!=null) hedefLine=`<line x1="${pad}" y1="${y(hedef)}" x2="${W-pad}" y2="${y(hedef)}" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${W-pad}" y="${y(hedef)-5}" text-anchor="end" font-size="11" fill="var(--accent)">hedef ${hedef}</text>`;
-  const dots=kayitlar.map((k,i)=>`<circle cx="${x(i)}" cy="${y(k.kilo)}" r="3.5" fill="var(--primary)"/>`).join('');
+  const dots=kayitlar.map((k,i)=>`<circle cx="${x(i)}" cy="${y(k[key])}" r="3.5" fill="var(--primary)"/>`).join('');
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <polygon points="${area}" fill="var(--primary-soft)" opacity="0.6"/>
     <polyline points="${pts}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
     ${hedefLine}${dots}
-    <text x="${pad}" y="14" font-size="11" fill="var(--ink-soft)">${max.toFixed(1)} kg</text>
-    <text x="${pad}" y="${H-pad+16}" font-size="11" fill="var(--ink-soft)">${min.toFixed(1)} kg</text>
+    <text x="${pad}" y="14" font-size="11" fill="var(--ink-soft)">${max.toFixed(1)} ${unit}</text>
+    <text x="${pad}" y="${H-pad+16}" font-size="11" fill="var(--ink-soft)">${min.toFixed(1)} ${unit}</text>
   </svg>`;
+}
+
+/* =====================================================================
+   UYUM  (diyetisyen — öğün "yaptım" yüzdeleri)
+   ===================================================================== */
+async function renderUyum(profil){
+  const box=$('ddBody');
+  box.innerHTML=`<div class="empty">Yükleniyor…</div>`;
+  let docs=[];
+  try{
+    const snap=await getDocs(collection(db,'kullanicilar',profil.id,'ogun'));
+    docs=snap.docs.map(d=>({tarih:d.id,...d.data()})).sort((a,b)=>a.tarih<b.tarih?-1:1).slice(-14);
+  }catch(e){ box.innerHTML=`<div class="empty">Veri okunamadı (${(e&&e.code)||'hata'}).</div>`; return; }
+  if(!docs.length){ box.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg><div>Henüz öğün işareti yok.<br>Danışan “Yaptım” dedikçe burada görünür.</div></div>`; return; }
+  const gunVeri=docs.map(d=>{ const toplam=d.toplam||0, yap=(d.yapilan||[]).length;
+    return {tarih:d.tarih, yapilan:yap, toplam, oran: toplam? Math.round((yap/toplam)*100):0}; });
+  const toplamY=gunVeri.reduce((s,g)=>s+g.yapilan,0);
+  const toplamT=gunVeri.reduce((s,g)=>s+g.toplam,0);
+  const ortalama= toplamT? Math.round((toplamY/toplamT)*100):0;
+  const tamGun=gunVeri.filter(g=>g.toplam>0&&g.oran>=100).length;
+  box.innerHTML=`
+    <div class="stats">
+      <div class="stat"><div class="v">%${ortalama}</div><div class="k">Ortalama uyum (${gunVeri.length} gün)</div></div>
+      <div class="stat"><div class="v">${toplamY}<small> / ${toplamT}</small></div><div class="k">Yapılan öğün</div></div>
+      <div class="stat"><div class="v">${tamGun}</div><div class="k">Tam gün</div></div>
+    </div>
+    <div class="card pad">
+      <h3 style="font-size:16px;margin-bottom:14px">Günlük uyum</h3>
+      ${gunVeri.slice().reverse().map(g=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)">
+          <div style="width:88px;font-size:13px;color:var(--ink-soft)">${trTarih(g.tarih)}</div>
+          <div style="flex:1;height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden">
+            <div style="height:100%;width:${g.oran}%;background:${g.oran>=100?'var(--primary)':g.oran>=50?'#7BB89A':'var(--accent)'};transition:width .3s"></div>
+          </div>
+          <div style="width:96px;text-align:right;font-size:13px;font-weight:600">${g.yapilan}/${g.toplam} · %${g.oran}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* =====================================================================
+   MESAJLAŞMA — yüzen balon (danışan ↔ diyetisyen), canlı + bildirim
+   ===================================================================== */
+let chatRol=null, chatAcik=false, chatGorunum='liste', chatAktifUid=null;
+let sohbetler={}; // uid -> { ad, mesajlar:[], okundu, ilk, unsub }
+
+async function chatBaslat(rol){
+  chatDur();
+  chatRol=rol;
+  $('chatWidget').classList.remove('hidden');
+  sohbetler={};
+  if(rol==='danisan'){
+    sohbetler[state.uid]={ ad:'Diyetisyenim', okundu:(state.profil.okumaDanisan||0), mesajlar:[], ilk:true, unsub:null };
+    chatDinle(state.uid);
+  } else if(rol==='diyetisyen'){
+    try{
+      const snap=await getDocs(query(collection(db,'kullanicilar'), where('olusturan','==',state.uid)));
+      snap.docs.forEach(d=>{ const c=d.data();
+        sohbetler[d.id]={ ad:(c.adSoyad||c.kullaniciAdi||'Danışan'), okundu:(c.okumaDiyetisyen||0), mesajlar:[], ilk:true, unsub:null };
+        chatDinle(d.id);
+      });
+    }catch(e){}
+  }
+  chatBadgeGuncelle();
+}
+function chatDur(){
+  Object.values(sohbetler).forEach(s=>{ if(s.unsub){ try{s.unsub();}catch(e){} } });
+  sohbetler={}; chatRol=null; chatAcik=false; chatGorunum='liste'; chatAktifUid=null;
+  const w=$('chatWidget'); if(w) w.classList.add('hidden');
+  const p=$('chatPanel'); if(p){ p.classList.add('hidden'); p.innerHTML=''; }
+}
+function chatDinle(uid){
+  const q=query(collection(db,'kullanicilar',uid,'mesajlar'), orderBy('olusturulma','asc'));
+  sohbetler[uid].unsub=onSnapshot(q, snap=>{
+    const s=sohbetler[uid]; if(!s) return;
+    s.mesajlar=snap.docs.map(d=>d.data());
+    if(!s.ilk){
+      snap.docChanges().forEach(ch=>{
+        if(ch.type==='added'){
+          const m=ch.doc.data();
+          const acikBu = chatAcik && chatGorunum==='thread' && chatAktifUid===uid;
+          if(m.gonderen!==chatRol && !acikBu) mesajBildir(uid,m);
+        }
+      });
+    }
+    s.ilk=false;
+    if(chatAcik && chatGorunum==='thread' && chatAktifUid===uid){ chatThreadCiz(); chatOkunduYap(uid); }
+    else if(chatAcik && chatGorunum==='liste'){ chatListeCiz(); }
+    chatBadgeGuncelle();
+  }, err=>{});
+}
+function okunmamis(uid){
+  const s=sohbetler[uid]; if(!s) return 0;
+  return s.mesajlar.filter(m=>m.gonderen!==chatRol && (m.olusturulma||0)>(s.okundu||0)).length;
+}
+function chatBadgeGuncelle(){
+  let t=0; Object.keys(sohbetler).forEach(uid=>t+=okunmamis(uid));
+  const b=$('chatBadge'); if(!b) return;
+  if(t>0){ b.textContent=t>99?'99+':t; b.classList.remove('hidden'); }
+  else b.classList.add('hidden');
+}
+function mesajBildir(uid,m){
+  const ad = chatRol==='diyetisyen' ? ((sohbetler[uid]&&sohbetler[uid].ad)||'Danışan') : 'Diyetisyen';
+  toast('Yeni mesaj · '+ad, m.metin);
+  if(('Notification' in window) && Notification.permission==='granted'){
+    try{ new Notification('Yeni mesaj · '+ad, {body:m.metin, tag:'msg-'+uid}); }catch(e){}
+  }
+}
+window.chatToggle=function(){
+  chatAcik=!chatAcik;
+  $('chatPanel').classList.toggle('hidden',!chatAcik);
+  if(chatAcik){
+    if(('Notification' in window) && Notification.permission==='default') Notification.requestPermission().catch(()=>{});
+    if(chatRol==='danisan'){ chatGorunum='thread'; chatAktifUid=state.uid; }
+    else { chatGorunum='liste'; chatAktifUid=null; }
+    chatPanelCiz();
+  }
+};
+window.chatAc=function(uid){ chatGorunum='thread'; chatAktifUid=uid; chatPanelCiz(); chatOkunduYap(uid); };
+window.chatListeyeDon=function(){ chatGorunum='liste'; chatAktifUid=null; chatPanelCiz(); };
+function notifBtnHTML(){
+  if(!('Notification' in window) || Notification.permission==='granted') return '';
+  return `<button onclick="chatBildirimIste()" title="Bildirimleri aç"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>`;
+}
+window.chatBildirimIste=async function(){
+  if(!('Notification' in window)) return;
+  await Notification.requestPermission().catch(()=>{});
+  chatPanelCiz();
+};
+function chatPanelCiz(){
+  const panel=$('chatPanel'); if(!panel) return;
+  if(chatGorunum==='liste'){
+    panel.innerHTML=`
+      <div class="chat-head"><div class="ttl">Mesajlar</div>${notifBtnHTML()}<button onclick="chatToggle()" title="Kapat">×</button></div>
+      <div class="chat-msgs" id="chatList" style="padding:0;gap:0"></div>`;
+    chatListeCiz();
+  }else{
+    const ad = chatRol==='diyetisyen' ? ((sohbetler[chatAktifUid]&&sohbetler[chatAktifUid].ad)||'Danışan') : 'Diyetisyenim';
+    panel.innerHTML=`
+      <div class="chat-head">
+        ${chatRol==='diyetisyen'?`<button onclick="chatListeyeDon()" title="Geri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg></button>`:''}
+        <div class="ttl">${esc(ad)}</div>${notifBtnHTML()}<button onclick="chatToggle()" title="Kapat">×</button>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input">
+        <input id="chatInput" placeholder="Mesaj yaz…" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();chatGonder()}">
+        <button class="btn" onclick="chatGonder()">Gönder</button>
+      </div>`;
+    chatThreadCiz();
+    const inp=$('chatInput'); if(inp) inp.focus();
+  }
+}
+function chatListeCiz(){
+  const box=$('chatList'); if(!box) return;
+  const uids=Object.keys(sohbetler);
+  if(!uids.length){ box.innerHTML=`<div class="chat-empty">Henüz danışanın yok.</div>`; return; }
+  uids.sort((a,b)=>sonTs(b)-sonTs(a));
+  box.innerHTML=uids.map(uid=>{
+    const s=sohbetler[uid];
+    const son=s.mesajlar[s.mesajlar.length-1];
+    const u=okunmamis(uid);
+    const onek = son? (son.gonderen===chatRol?'Sen: ':'') : '';
+    return `<div class="conv ${u?'unread':''}" onclick="chatAc('${uid}')">
+      <div class="avatar">${esc(initialler(s.ad))}</div>
+      <div style="min-width:0;flex:1"><div class="nm">${esc(s.ad)}</div><div class="last">${son?esc(onek+son.metin):'Mesaj yok'}</div></div>
+      ${u?`<div class="ub">${u}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function sonTs(uid){ const s=sohbetler[uid]; const m=s&&s.mesajlar[s.mesajlar.length-1]; return m?(m.olusturulma||0):0; }
+function chatThreadCiz(){
+  const box=$('chatMsgs'); if(!box) return;
+  const s=sohbetler[chatAktifUid];
+  const msgs=(s&&s.mesajlar)||[];
+  if(!msgs.length){ box.innerHTML=`<div class="chat-empty">Henüz mesaj yok. İlk mesajı yaz.</div>`; return; }
+  box.innerHTML=msgs.map(m=>{
+    const ben=m.gonderen===chatRol;
+    const saat=m.olusturulma?new Date(m.olusturulma).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+    return `<div class="bubble ${ben?'ben':'karsi'}">${esc(m.metin)}<div class="meta">${saat}</div></div>`;
+  }).join('');
+  box.scrollTop=box.scrollHeight;
+}
+window.chatGonder=async function(){
+  const inp=$('chatInput'); if(!inp||!chatAktifUid) return;
+  const metin=inp.value.trim(); if(!metin) return;
+  inp.value='';
+  try{
+    await addDoc(collection(db,'kullanicilar',chatAktifUid,'mesajlar'),
+      { metin, gonderen:chatRol, gonderenUid:state.uid, olusturulma:Date.now() });
+    const hedef = chatRol==='danisan' ? state.profil.olusturan : chatAktifUid;
+    pushGonder(hedef, metin);
+  }
+  catch(e){ toast('Hata',authHata(e)); inp.value=metin; }
+};
+async function chatOkunduYap(uid){
+  const s=sohbetler[uid]; if(!s) return;
+  s.okundu=Date.now(); chatBadgeGuncelle();
+  try{
+    const alan = chatRol==='danisan' ? {okumaDanisan:s.okundu} : {okumaDiyetisyen:s.okundu};
+    await updateDoc(doc(db,'kullanicilar',uid), alan);
+  }catch(e){}
+}
+
+/* =====================================================================
+   FCM PUSH — arka plan bildirimi (yalnızca https / Vercel)
+   ===================================================================== */
+let fcmMessaging=null;
+async function pushBaslat(){
+  try{
+    if(!('serviceWorker' in navigator) || !('Notification' in window)) return;
+    if(location.protocol==='file:') return;            // SW https ister
+    if(!VAPID_KEY || VAPID_KEY==='BURAYA_VAPID_KEY') return; // anahtar girilmemiş
+    const reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    if(Notification.permission==='default'){ const p=await Notification.requestPermission(); if(p!=='granted') return; }
+    if(Notification.permission!=='granted') return;
+    const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js');
+    fcmMessaging = getMessaging(app);
+    const token = await getToken(fcmMessaging, { vapidKey:VAPID_KEY, serviceWorkerRegistration:reg });
+    if(token){
+      const id = token.slice(0,180).replace(/[^A-Za-z0-9_-]/g,'_');
+      await setDoc(doc(db,'kullanicilar',state.uid,'pushTokens',id),
+        { token, ts:Date.now(), ua:(navigator.userAgent||'').slice(0,200) }, {merge:true});
+    }
+    // ön planda (uygulama açıkken) gelen push: uygulama zaten toast gösterdiği için sessiz geç
+    onMessage(fcmMessaging, ()=>{});
+  }catch(e){ console.log('push init:', e&&e.message||e); }
+}
+async function pushGonder(hedefUid, metin){
+  try{
+    if(!hedefUid || !PUSH_API) return;
+    if(!auth.currentUser) return;
+    const idToken = await auth.currentUser.getIdToken();
+    const ad = state.profil.adSoyad||state.profil.kullaniciAdi||'';
+    await fetch(PUSH_API, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ idToken, hedefUid, baslik:'Yeni mesaj · '+ad, govde:metin, link:'/' }) });
+  }catch(e){ /* push başarısızsa sohbet yine çalışır */ }
 }
 
 /* =====================================================================
