@@ -772,13 +772,41 @@ window.csvUygula=function(){
 };
 window.csvSablonIndir=function(){
   const ornek='Gün;Saat;Öğün;İçerik\n'
-    +'Pazartesi;08:00;Kahvaltı;2 yumurta, 1 dilim tam buğday ekmeği, 5 zeytin\n'
+    +'Pazartesi;08:00;Kahvaltı;2 yumurta, 1 dilim tam buğday ekmeği, 5 zeytin, domates-salatalık\n'
     +'Pazartesi;10:30;Ara Öğün;1 elma, 5 badem\n'
     +'Pazartesi;13:00;Öğle;Izgara tavuk göğsü, bol salata, 4 yk bulgur pilavı\n'
     +'Pazartesi;16:00;Ara Öğün;1 kase yoğurt\n'
     +'Pazartesi;19:00;Akşam;Sebze yemeği, 1 dilim ekmek, cacık\n'
     +'Salı;08:00;Kahvaltı;Peynir, domates, salatalık, 1 dilim ekmek\n'
-    +'Salı;13:00;Öğle;Mercimek çorbası, ızgara köfte, salata\n';
+    +'Salı;10:30;Ara Öğün;1 muz\n'
+    +'Salı;13:00;Öğle;Mercimek çorbası, ızgara köfte, salata\n'
+    +'Salı;16:00;Ara Öğün;1 avuç ceviz\n'
+    +'Salı;19:00;Akşam;Fırın balık, yeşil salata\n'
+    +'Çarşamba;08:00;Kahvaltı;Yulaf ezmesi, süt, tarçın\n'
+    +'Çarşamba;10:30;Ara Öğün;1 portakal\n'
+    +'Çarşamba;13:00;Öğle;Nohut yemeği, bulgur pilavı, cacık\n'
+    +'Çarşamba;16:00;Ara Öğün;1 kase yoğurt\n'
+    +'Çarşamba;19:00;Akşam;Tavuk sote, sebze\n'
+    +'Perşembe;08:00;Kahvaltı;Menemen, 1 dilim ekmek\n'
+    +'Perşembe;10:30;Ara Öğün;1 elma\n'
+    +'Perşembe;13:00;Öğle;Etli kuru fasulye, pirinç pilavı, salata\n'
+    +'Perşembe;16:00;Ara Öğün;5 kuru kayısı\n'
+    +'Perşembe;19:00;Akşam;Izgara köfte, közlenmiş sebze\n'
+    +'Cuma;08:00;Kahvaltı;Peynir, zeytin, domates, 1 dilim ekmek\n'
+    +'Cuma;10:30;Ara Öğün;1 armut\n'
+    +'Cuma;13:00;Öğle;Sebzeli makarna, yoğurt\n'
+    +'Cuma;16:00;Ara Öğün;1 avuç fındık\n'
+    +'Cuma;19:00;Akşam;Fırın tavuk, salata\n'
+    +'Cumartesi;09:00;Kahvaltı;Ölçülü serpme kahvaltı, 1 dilim ekmek\n'
+    +'Cumartesi;11:30;Ara Öğün;1 elma\n'
+    +'Cumartesi;14:00;Öğle;Izgara balık, bol yeşillik\n'
+    +'Cumartesi;16:30;Ara Öğün;1 kase yoğurt\n'
+    +'Cumartesi;19:30;Akşam;Sebze çorbası, omlet\n'
+    +'Pazar;09:00;Kahvaltı;Yumurta, peynir, domates, salatalık\n'
+    +'Pazar;11:30;Ara Öğün;1 portakal\n'
+    +'Pazar;14:00;Öğle;Etli sebze yemeği, bulgur pilavı\n'
+    +'Pazar;16:30;Ara Öğün;5 badem\n'
+    +'Pazar;19:30;Akşam;Mercimek çorbası, salata\n';
   const blob=new Blob(['\uFEFF'+ornek],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='diyet-sablon.csv'; document.body.appendChild(a); a.click(); a.remove();
