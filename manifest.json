@@ -1,6 +1,6 @@
 {
-  "name": "Diyet Takip",
-  "short_name": "Diyet",
+  "name": "Vitam",
+  "short_name": "Vitam",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

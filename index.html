@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Diyet Takip — Diyetisyen Paneli</title>
+<title>Vitam</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/icon-192.png">
 <meta name="theme-color" content="#2F6B4F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Diyet Takip">
+<meta name="apple-mobile-web-app-title" content="Vitam">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
@@ -76,7 +77,7 @@
   .brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
   .brand .mark{width:42px;height:42px;border-radius:12px;background:var(--primary);
     display:grid;place-items:center;color:#fff;flex:none}
-  .brand .mark svg{width:24px;height:24px}
+  .brand .mark svg{width:30px;height:30px}
   .brand h1{font-size:21px}
   .brand p{font-size:12.5px;color:var(--ink-soft);font-family:'Plus Jakarta Sans'}
   .tabs{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:22px;border:1px solid var(--line)}
@@ -90,7 +91,7 @@
   .topbar{background:var(--surface);border-bottom:1px solid var(--line);
     padding:12px 22px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:30}
   .topbar .mark{width:34px;height:34px;border-radius:10px;background:var(--primary);display:grid;place-items:center;color:#fff;flex:none}
-  .topbar .mark svg{width:19px;height:19px}
+  .topbar .mark svg{width:24px;height:24px}
   .topbar .who{font-weight:700;font-size:15px}
   .topbar .role{font-size:12px;color:var(--ink-soft)}
   .topbar .spacer{flex:1}
@@ -113,6 +114,66 @@
   .client-row .meta .nm{font-weight:600}
   .client-row .meta .sub{font-size:13px;color:var(--ink-soft)}
   .chev{color:var(--ink-soft);flex:none}
+
+  /* danışan kartları */
+  .danisan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:14px}
+  .dcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px;cursor:pointer;transition:.15s;position:relative}
+  .dcard:hover{border-color:var(--primary);transform:translateY(-1px)}
+  .dcard .edit{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line)}
+  .dcard .edit svg{width:15px;height:15px}
+  .dcard .edit:hover{color:var(--primary);border-color:var(--primary)}
+  .dcard .dhead{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-right:34px}
+  .dcard .dhead .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dcard .dhead .sub{font-size:12.5px;color:var(--ink-soft)}
+  .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+  .dgrid .it .k{color:var(--ink-soft);font-size:11.5px}
+  .dgrid .it .v{font-weight:600;font-size:13.5px}
+  .odeme-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+  .odeme-badge.ok{background:var(--primary-soft);color:var(--primary-dark)}
+  .odeme-badge.bekle{background:var(--accent-soft);color:var(--accent)}
+  .odeme-badge.gecik{background:#FBEEEC;color:var(--danger)}
+  .odeme-badge.bugun,.odeme-badge.yakin{background:var(--accent-soft);color:var(--accent)}
+  .odeme-badge.ileri{background:var(--surface-2);color:var(--ink-soft)}
+  .odeme-badge.odendi{background:var(--primary-soft);color:var(--primary-dark)}
+  .dcard-odeme{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-soft)}
+  .dcard-not{margin-top:10px}
+  .dcard-not textarea{width:100%;min-height:46px;resize:vertical;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px;background:var(--surface-2)}
+  .dcard-not textarea:focus{outline:none;border-color:var(--primary);background:var(--surface);box-shadow:0 0 0 3px var(--primary-soft)}
+
+  /* iki sütun: kartlar + ödeme paneli */
+  .dlayout{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+  .odeme-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px;position:sticky;top:78px}
+  .odeme-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;margin-bottom:12px}
+  .odeme-head svg{width:18px;height:18px;color:var(--primary)}
+  .odeme-row{display:flex;align-items:center;gap:11px;padding:9px;border-radius:11px;cursor:pointer;transition:.12s}
+  .odeme-row:hover{background:var(--surface-2)}
+  .odeme-date{flex:none;width:42px;text-align:center;border-radius:9px;padding:4px 0;background:var(--surface-2);border:1px solid var(--line)}
+  .odeme-date .g{font-weight:800;font-size:16px;line-height:1}
+  .odeme-date .a{font-size:10.5px;color:var(--ink-soft)}
+  .odeme-row .onm{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .odeme-row .ost{font-size:12px;color:var(--ink-soft)}
+  .odeme-row.gecik .odeme-date{background:#FBEEEC;border-color:#E8C9C2}
+  .odeme-row.gecik .odeme-date .g{color:var(--danger)}
+  .odeme-row.gecik .ost{color:var(--danger);font-weight:600}
+  .odeme-row.bugun .odeme-date,.odeme-row.yakin .odeme-date{background:var(--accent-soft);border-color:#F0CFB6}
+  .odeme-row.bugun .odeme-date .g,.odeme-row.yakin .odeme-date .g{color:var(--accent)}
+  .odeme-row.bugun .ost,.odeme-row.yakin .ost{color:var(--accent);font-weight:600}
+  .odeme-row.odendi{opacity:.65}
+  .odeme-row.odendi .odeme-date{background:var(--primary-soft);border-color:#bcd9c6}
+  .odeme-row.odendi .odeme-date .g{color:var(--primary-dark)}
+  .odeme-mini{flex:none;font-size:11.5px;font-weight:700;padding:6px 10px;border-radius:8px;background:var(--primary);color:#fff;border:none}
+  .odeme-mini:hover{background:var(--primary-dark)}
+  .odeme-mini.geri{background:var(--primary-soft);color:var(--primary-dark);padding:6px 9px}
+  /* borç hatırlatma listesi */
+  .borc-list{max-height:300px;overflow:auto;margin-bottom:14px;border:1px solid var(--line);border-radius:12px}
+  .borc-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .borc-row:last-child{border-bottom:none}
+  .btn.sm{padding:6px 11px;font-size:12.5px;border-radius:9px}
+  .btn.sm.wa{background:#25D366;border-color:#25D366;color:#fff}
+  .btn.sm.wa:hover{background:#1da851}
+  .btn.sm.wa:disabled{opacity:.45}
+  .btn.sm.ok{background:var(--primary-soft);color:var(--primary-dark);border-color:transparent}
+  @media(max-width:820px){ .dlayout{grid-template-columns:1fr} .odeme-panel{position:static;order:-1} }
 
   /* day tabs */
   .daytabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
@@ -148,8 +209,9 @@
   .bubble .meta{font-size:10.5px;opacity:.65;margin-top:4px}
   .bubble.ben{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:5px}
   .bubble.karsi{align-self:flex-start;background:var(--surface-2);border:1px solid var(--line);border-bottom-left-radius:5px}
-  .chat-input{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:var(--surface)}
-  .chat-input input{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:999px}
+  .chat-input{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:var(--surface);align-items:flex-end}
+  .chat-input textarea{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:18px;font-family:inherit;font-size:14.5px;line-height:1.4;resize:none;max-height:120px;overflow-y:auto}
+  .chat-input textarea:focus{outline:none;border-color:var(--primary)}
   .chat-empty{margin:auto;text-align:center;color:var(--ink-soft);font-size:14px;padding:30px}
 
   /* floating chat widget */
@@ -238,10 +300,10 @@
   <!-- genel giriş (danışan + diyetisyen) -->
   <div class="login-card" id="loginPublic">
     <div class="brand">
-      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+      <div class="mark"><svg viewBox="140 100 252 285" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M168 150 L256 356" stroke="#FBF7EF" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><path d="M256 356 C312 300 362 250 356 148 C332 232 292 300 256 356 Z" fill="#FBF7EF"/><path d="M256 356 C310 288 346 232 354 156" stroke="#3C8160" stroke-width="7" stroke-linecap="round"/><circle cx="372" cy="120" r="15" fill="#E0712F"/></svg></div>
       <div>
-        <h1>Diyet Takip</h1>
-        <p>Diyetisyen & danışan platformu</p>
+        <h1>Vitam</h1>
+        <p>Beslenme takip platformu</p>
       </div>
     </div>
 
@@ -288,7 +350,7 @@
 <!-- ============ APP ============ -->
 <div id="app" class="hidden">
   <div class="topbar">
-    <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+    <div class="mark"><svg viewBox="140 100 252 285" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M168 150 L256 356" stroke="#FBF7EF" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><path d="M256 356 C312 300 362 250 356 148 C332 232 292 300 256 356 Z" fill="#FBF7EF"/><path d="M256 356 C310 288 346 232 354 156" stroke="#3C8160" stroke-width="7" stroke-linecap="round"/><circle cx="372" cy="120" r="15" fill="#E0712F"/></svg></div>
     <div>
       <div class="who" id="topWho">—</div>
       <div class="role" id="topRole">—</div>
@@ -315,7 +377,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, where, orderBy, limit, onSnapshot, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 /* =====================================================================
@@ -335,6 +397,27 @@ const EPOSTA_SONEKI = "@diyet.local"; // kullanıcı adı -> sahte e-posta dön�
 // FCM push (arka plan bildirimi) — yalnızca https'te (Vercel) çalışır
 const VAPID_KEY = "BGG2-fJNF7kP4opttfoaAk2aEojyQCt_g5WJvIQ2_6W-SFFyQO_KB7c-AVsYVBzujFOtcJltgBOebD7vTGPi0QA"; // Firebase Console > Cloud Messaging > Web Push certificates
 const PUSH_API  = "/api/push";        // mesaj bildirimi gönderen Vercel fonksiyonu
+const VARSAYILAN_BORC_MESAJI = "Merhaba {ad}, bu ayki danışmanlık ödemenizin tarihi geçti. Uygun olduğunuzda iletebilir misiniz? Teşekkürler.";
+
+// telefonu WhatsApp (wa.me) biçimine çevir: sadece rakam, başına ülke kodu
+function waNumber(tel){
+  let d=String(tel||'').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.startsWith('00')) d=d.slice(2);
+  if(d.startsWith('0')) d='90'+d.slice(1);
+  else if(d.length===10 && d.startsWith('5')) d='90'+d;
+  return d;
+}
+// şablondaki {ad} {tutar} {gun} yer tutucularını doldur
+function borcMetni(tpl,d){
+  return String(tpl||'')
+    .replace(/\{ad\}/g, d.adSoyad||d.kullaniciAdi||'')
+    .replace(/\{tutar\}/g, d.odemeNot?(d.odemeNot+' '+(d.paraBirimi||'₺')):'')
+    .replace(/\{gun\}/g, d.odemeGunu||'');
+}
+// popüler para birimleri (sembol, ad)
+const PARALAR=[['₺','TL'],['$','USD'],['€','EUR'],['£','GBP']];
+function paraOpts(sec){ const s=sec||'₺'; return PARALAR.map(([sem,ad])=>`<option value="${sem}" ${s===sem?'selected':''}>${sem} ${ad}</option>`).join(''); }
 
 /* ===================================================================== */
 
@@ -562,30 +645,205 @@ async function renderDiyetisyen(){
       <h2>Danışanlarım</h2>
       <button class="btn accent" onclick="yeniDanisanModal()">+ Yeni danışan</button>
     </div>
-    <div class="card" id="clientCard"><div class="empty">Yükleniyor…</div></div>`;
+    <div class="dlayout">
+      <div id="clientCard"><div class="empty">Yükleniyor…</div></div>
+      <aside class="odeme-panel" id="odemePanel"></aside>
+    </div>`;
   await loadDanisanlar();
 }
 async function loadDanisanlar(){
   const q=query(collection(db,'kullanicilar'), where('olusturan','==',state.uid));
   const snap=await getDocs(q);
   danisanlar=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.adSoyad||'').localeCompare(b.adSoyad||'','tr'));
-  const card=$('clientCard');
+  // "Güncel kilo"yu her danışanın paylaştığı SON kilo kaydından çek
+  await Promise.all(danisanlar.map(async d=>{
+    try{
+      const ks=await getDocs(query(collection(db,'kullanicilar',d.id,'kilolar'), orderBy('olusturulma','desc'), limit(1)));
+      if(!ks.empty) d.guncelKilo = ks.docs[0].data().kilo;
+    }catch(e){}
+  }));
+  cizDanisanlar();
+}
+function cizDanisanlar(){
+  const card=$('clientCard'); if(!card) return;
   if(!danisanlar.length){
     card.innerHTML=`<div class="empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <div>Henüz danışan eklemedin.<br>“Yeni danışan” ile başla.</div></div>`;
+    odemePanelCiz();
     return;
   }
-  card.innerHTML=danisanlar.map(d=>`
-    <div class="client-row" onclick="acDanisan('${d.id}')">
-      <div class="avatar">${esc(initialler(d.adSoyad))}</div>
-      <div class="meta">
-        <div class="nm">${esc(d.adSoyad||d.kullaniciAdi)}</div>
-        <div class="sub">@${esc(d.kullaniciAdi)} · ${ogunSayisi(d)} öğün/gün</div>
+  const sat=(k,v)=>`<div class="it"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  card.innerHTML=`<div class="danisan-grid">`+danisanlar.map(d=>{
+    const ob=odemeBilgi(d);
+    const odemeSatir = ob
+      ? `Sonraki ödeme: <b>${trTarih(ob.iso)}</b> <span class="odeme-badge ${ob.cls}">${ob.txt}</span>`
+      : 'Ödeme günü tanımlı değil';
+    return `
+    <div class="dcard" onclick="acDanisan('${d.id}')">
+      <button class="edit" title="Bilgileri düzenle" onclick="event.stopPropagation();danisanDuzenleModal('${d.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      </button>
+      <div class="dhead">
+        <div class="avatar">${esc(initialler(d.adSoyad))}</div>
+        <div style="min-width:0"><div class="nm">${esc(d.adSoyad||d.kullaniciAdi)}</div><div class="sub">@${esc(d.kullaniciAdi)}</div></div>
       </div>
-      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-    </div>`).join('');
+      <div class="dgrid">
+        ${sat('Yaş', d.yas?d.yas:'—')}
+        ${sat('Boy', d.boy?d.boy+' cm':'—')}
+        ${sat('Başlangıç', d.baslangicKilo?d.baslangicKilo+' kg':'—')}
+        ${sat('Güncel', d.guncelKilo?d.guncelKilo+' kg':'—')}
+        ${sat('Tartı günü', d.tartiGunu||'—')}
+        ${sat('Ödeme günü', d.odemeGunu?('Ayın '+d.odemeGunu+'.'):'—')}
+        <div class="it"><div class="k">Telefon</div><div class="v">${d.telefon?`<a href="https://wa.me/${waNumber(d.telefon)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:none">${esc(d.telefon)}</a>`:'—'}</div></div>
+        <div class="it"><div class="k">Aylık ücret</div><div class="v">${d.odemeNot?esc(d.odemeNot)+' '+esc(d.paraBirimi||'₺'):'—'}</div></div>
+      </div>
+      <div class="dcard-odeme">${odemeSatir}</div>
+      <div class="dcard-not" onclick="event.stopPropagation()">
+        <textarea placeholder="Kişiye özel not… (otomatik kaydedilir)" onclick="event.stopPropagation()"
+          onchange="notKaydet('${d.id}', this.value)">${esc(d.ozelNot||'')}</textarea>
+      </div>
+    </div>`;
+  }).join('')+`</div>`;
+  odemePanelCiz();
 }
+
+/* ---- aylık ödeme günü hesapları ---- */
+function ymStr(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }   // m: 0-indexli
+function ayUzunluk(y,m){ return new Date(y, m+1, 0).getDate(); }
+function isoYap(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+// d.odemeGunu (ayın günü) + d.odemeOdenenAy (ödenmiş ay 'YYYY-MM') → bilgi
+function odemeBilgi(d){
+  if(!d.odemeGunu) return null;
+  const now=new Date(); now.setHours(0,0,0,0);
+  const y=now.getFullYear(), m=now.getMonth();
+  const curYM=ymStr(y,m);
+  const paid = d.odemeOdenenAy===curYM;
+  let ty=y, tm=m;
+  if(paid){ tm=m+1; if(tm>11){ tm=0; ty++; } } // bu ay ödendiyse gelecek aya kay
+  const gun=Math.min(d.odemeGunu, ayUzunluk(ty,tm));
+  const tarih=new Date(ty,tm,gun);
+  const fark=Math.round((tarih-now)/86400000);
+  let txt, cls;
+  if(paid){ txt='Bu ay ödendi'; cls='odendi'; }
+  else if(fark<0){ txt=(-fark)+' gün gecikti'; cls='gecik'; }
+  else if(fark===0){ txt='Bugün'; cls='bugun'; }
+  else if(fark<=7){ txt=fark+' gün sonra'; cls='yakin'; }
+  else { txt=fark+' gün sonra'; cls='ileri'; }
+  return { tarih, iso:isoYap(tarih), fark, paid, txt, cls };
+}
+function odemePanelCiz(){
+  const panel=$('odemePanel'); if(!panel) return;
+  const liste=danisanlar.map(d=>({d, ob:odemeBilgi(d)})).filter(x=>x.ob)
+    .sort((a,b)=>a.ob.tarih-b.ob.tarih);
+  const head=`<div class="odeme-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span>Yaklaşan ödemeler</span>
+    <button class="odeme-mini" style="margin-left:auto" onclick="borcHatirlatModal()">Borç hatırlat</button></div>`;
+  if(!liste.length){ panel.innerHTML=head+`<div class="muted" style="font-size:13px;padding:6px 2px">Ödeme günü tanımlı danışan yok.</div>`; return; }
+  panel.innerHTML=head+liste.map(({d,ob})=>{
+    const gun=ob.tarih.getDate(), ay=ob.tarih.toLocaleDateString('tr-TR',{month:'short'});
+    const btn = ob.paid
+      ? `<button class="odeme-mini geri" onclick="event.stopPropagation();odemeGeriAl('${d.id}')" title="Geri al">✓</button>`
+      : `<button class="odeme-mini" onclick="event.stopPropagation();odemeOdendiYap('${d.id}')">Ödendi</button>`;
+    return `<div class="odeme-row ${ob.cls}" onclick="danisanDuzenleModal('${d.id}')">
+      <div class="odeme-date"><div class="g">${gun}</div><div class="a">${ay}</div></div>
+      <div style="min-width:0;flex:1">
+        <div class="onm">${esc(d.adSoyad||d.kullaniciAdi)}</div>
+        <div class="ost">${ob.txt}${d.odemeNot?' · '+esc(d.odemeNot)+' '+esc(d.paraBirimi||'₺'):''}</div>
+      </div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+window.odemeOdendiYap=async function(id){
+  const now=new Date(); const ym=ymStr(now.getFullYear(),now.getMonth());
+  const d=danisanlar.find(x=>x.id===id); if(d) d.odemeOdenenAy=ym;
+  cizDanisanlar();
+  try{ await updateDoc(doc(db,'kullanicilar',id),{odemeOdenenAy:ym}); toast('Ödeme alındı olarak işaretlendi'); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+window.odemeGeriAl=async function(id){
+  const d=danisanlar.find(x=>x.id===id); if(d) d.odemeOdenenAy=null;
+  cizDanisanlar();
+  try{ await updateDoc(doc(db,'kullanicilar',id),{odemeOdenenAy:null}); toast('Geri alındı'); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+window.notKaydet=async function(id, val){
+  const d=danisanlar.find(x=>x.id===id); if(d) d.ozelNot=val;
+  try{ await updateDoc(doc(db,'kullanicilar',id),{ ozelNot: val.trim()||null }); toast('Not kaydedildi'); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+
+/* ---- borç hatırlatma (WhatsApp + uygulama) ---- */
+function borclular(){
+  return danisanlar.filter(d=>{ const ob=odemeBilgi(d); return ob && !ob.paid && ob.fark<=0; });
+}
+window.borcHatirlatModal=function(){
+  const tpl = (state.profil&&state.profil.borcMesaji) || VARSAYILAN_BORC_MESAJI;
+  const list = borclular();
+  const rows = list.map(d=>`
+    <div class="borc-row">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600">${esc(d.adSoyad||d.kullaniciAdi)}</div>
+        <div class="muted" style="font-size:12px">${d.telefon?esc(d.telefon):'telefon yok'}</div>
+      </div>
+      <button class="btn sm wa" onclick="borcWhatsapp('${d.id}')" ${d.telefon?'':'disabled'}>WhatsApp</button>
+      <button class="btn sm ghost" onclick="borcUygulama('${d.id}', this)">Uygulama</button>
+    </div>`).join('');
+  modal(`
+    <h3>Borç hatırlatma</h3>
+    <div class="sub">${list.length?('Ödemesi geçmiş '+list.length+' danışan.'):'Şu an ödemesi geçmiş danışan yok.'} Mesajı düzenleyip gönderebilirsin.</div>
+    <div class="field"><label>Mesaj şablonu <span class="muted">({ad}, {tutar} otomatik dolar)</span></label>
+      <textarea id="borc_tpl" rows="3" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px">${esc(tpl)}</textarea></div>
+    <button class="btn ghost sm" onclick="borcSablonKaydet()" style="margin-bottom:14px">Şablonu kaydet</button>
+    ${list.length?`<div class="borc-list">${rows}</div>
+      <div class="modal-foot">
+        <button class="btn ghost" onclick="closeModal()">Kapat</button>
+        <button class="btn" onclick="borcHepsiUygulama(this)">Hepsine uygulamadan gönder</button>
+      </div>`
+    :`<div class="modal-foot"><button class="btn ghost" onclick="closeModal()">Kapat</button></div>`}
+  `);
+};
+window.borcSablonKaydet=async function(){
+  const tpl=$('borc_tpl').value;
+  if(state.profil) state.profil.borcMesaji=tpl;
+  try{ await updateDoc(doc(db,'kullanicilar',state.uid),{ borcMesaji: tpl }); toast('Şablon kaydedildi'); }
+  catch(e){ toast('Hata',authHata(e)); }
+};
+window.borcWhatsapp=function(id){
+  const d=danisanlar.find(x=>x.id===id); if(!d) return;
+  const num=waNumber(d.telefon); if(!num){ toast('Telefon yok'); return; }
+  const metin=borcMetni($('borc_tpl').value, d);
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(metin)}`, '_blank', 'noopener');
+};
+window.borcUygulama=async function(id, btn){
+  const d=danisanlar.find(x=>x.id===id); if(!d) return;
+  const metin=borcMetni($('borc_tpl').value, d);
+  if(btn){ btn.disabled=true; btn.textContent='…'; }
+  try{
+    await addDoc(collection(db,'kullanicilar',id,'mesajlar'),
+      { metin, gonderen:'diyetisyen', gonderenUid:state.uid, olusturulma:Date.now() });
+    pushGonder(id, metin);
+    if(btn){ btn.textContent='Gönderildi ✓'; btn.classList.add('ok'); }
+    else toast('Gönderildi');
+  }catch(e){ toast('Hata',authHata(e)); if(btn){ btn.disabled=false; btn.textContent='Uygulama'; } }
+};
+window.borcHepsiUygulama=async function(btn){
+  const list=borclular(); if(!list.length) return;
+  if(btn){ btn.disabled=true; btn.textContent='Gönderiliyor…'; }
+  let n=0;
+  for(const d of list){
+    const metin=borcMetni($('borc_tpl').value, d);
+    try{
+      await addDoc(collection(db,'kullanicilar',d.id,'mesajlar'),
+        { metin, gonderen:'diyetisyen', gonderenUid:state.uid, olusturulma:Date.now() });
+      pushGonder(d.id, metin); n++;
+    }catch(e){}
+  }
+  toast('Uygulamadan gönderildi', n+' danışana iletildi.');
+  closeModal();
+};
 function ogunSayisi(d){
   const g=d.diyet&&d.diyet.gunler; if(!g) return 0;
   let max=0; HAFTA.forEach(k=>{ if(g[k]) max=Math.max(max,g[k].length); }); return max;
@@ -598,9 +856,22 @@ window.yeniDanisanModal=function(){
     <div class="field"><label>Ad soyad</label><input id="d_ad" placeholder="Ayşe Yılmaz"></div>
     <div class="field"><label>Kullanıcı adı</label><input id="d_kadi" placeholder="ayse" autocomplete="off"></div>
     <div class="field"><label>Şifre <span class="muted">(en az 6 karakter)</span></label><input id="d_sifre" placeholder="••••••"></div>
+    <div class="field"><label>Telefon <span class="muted">(WhatsApp için)</span></label><input id="d_tel" placeholder="0532 123 45 67"></div>
     <div class="row">
+      <div class="field"><label>Yaş</label><input id="d_yas" type="number" placeholder="30"></div>
       <div class="field"><label>Boy (cm)</label><input id="d_boy" type="number" placeholder="165"></div>
-      <div class="field"><label>Hedef kilo (kg)</label><input id="d_hedef" type="number" placeholder="60"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Başlangıç kilo</label><input id="d_bas" type="number" step="0.1" placeholder="78"></div>
+      <div class="field"><label>Hedef kilo</label><input id="d_hedef" type="number" step="0.1" placeholder="60"></div>
+    </div>
+    <div class="field"><label>Tartı günü</label><select id="d_tarti">
+      <option value="">—</option>${HAFTA.map(g=>`<option>${g}</option>`).join('')}
+    </select></div>
+    <div class="field"><label>Ödeme günü <span class="muted">(her ayın kaçında, 1-31)</span></label><input id="d_ogun" type="number" min="1" max="31" placeholder="1"></div>
+    <div class="row">
+      <div class="field"><label>Aylık ücret</label><input id="d_onot" placeholder="ör. 1500"></div>
+      <div class="field"><label>Para birimi</label><select id="d_para">${paraOpts('₺')}</select></div>
     </div>
     <div class="err" id="d_err"></div>
     <div class="modal-foot">
@@ -609,19 +880,25 @@ window.yeniDanisanModal=function(){
     </div>`);
 };
 window.danisanKaydet=async function(){
+  const num=v=>{ const n=parseFloat(v); return isNaN(n)?null:n; };
   const ad=$('d_ad').value.trim(), kadi=$('d_kadi').value.trim(), sifre=$('d_sifre').value;
-  const boy=parseFloat($('d_boy').value)||null, hedef=parseFloat($('d_hedef').value)||null;
   const err=$('d_err'); err.textContent='';
   if(!ad||!kadi||!sifre){ err.textContent='Ad, kullanıcı adı ve şifre zorunlu.'; return; }
   if(sifre.length<6){ err.textContent='Şifre en az 6 karakter olmalı.'; return; }
   const btn=$('d_kaydet'); btn.disabled=true; btn.textContent='Oluşturuluyor…';
   try{
-    // ikincil app ile oluştur -> diyetisyen oturumu bozulmaz
     const cred=await createUserWithEmailAndPassword(secondaryAuth, userToEmail(kadi), sifre);
     const uid=cred.user.uid;
     await setDoc(doc(db,'kullanicilar',uid),{
       rol:'danisan', kullaniciAdi:kadi, adSoyad:ad, olusturan:state.uid,
-      boy, hedefKilo:hedef, olusturulma:Date.now(),
+      yas:num($('d_yas').value), boy:num($('d_boy').value),
+      baslangicKilo:num($('d_bas').value), hedefKilo:num($('d_hedef').value),
+      tartiGunu:$('d_tarti').value||null,
+      odemeGunu:(()=>{const n=parseInt($('d_ogun').value,10);return (n>=1&&n<=31)?n:null;})(),
+      odemeNot:$('d_onot').value.trim()||null,
+      paraBirimi:$('d_para').value||'₺',
+      telefon:$('d_tel').value.trim()||null,
+      olusturulma:Date.now(),
       diyet:{ gunler:{}, guncelleme:Date.now() }
     });
     await signOut(secondaryAuth);
@@ -630,6 +907,62 @@ window.danisanKaydet=async function(){
     await loadDanisanlar();
     if(chatRol==='diyetisyen') chatBaslat('diyetisyen');
   }catch(e){ err.textContent=authHata(e); btn.disabled=false; btn.textContent='Oluştur'; }
+};
+
+window.danisanDuzenleModal=function(id){
+  const d=danisanlar.find(x=>x.id===id); if(!d) return;
+  const sel=(cur,val)=>cur===val?'selected':'';
+  modal(`
+    <h3>Danışan bilgileri</h3>
+    <div class="sub">@${esc(d.kullaniciAdi)} <span class="muted">(kullanıcı adı değiştirilemez)</span></div>
+    <div class="field"><label>Ad soyad</label><input id="e_ad" value="${esc(d.adSoyad||'')}"></div>
+    <div class="field"><label>Telefon <span class="muted">(WhatsApp için)</span></label><input id="e_tel" value="${esc(d.telefon||'')}" placeholder="0532 123 45 67"></div>
+    <div class="row">
+      <div class="field"><label>Yaş</label><input id="e_yas" type="number" value="${d.yas??''}"></div>
+      <div class="field"><label>Boy (cm)</label><input id="e_boy" type="number" value="${d.boy??''}"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Başlangıç kilo</label><input id="e_bas" type="number" step="0.1" value="${d.baslangicKilo??''}"></div>
+      <div class="field"><label>Güncel kilo</label><input id="e_guncel" type="number" step="0.1" value="${d.guncelKilo??''}"></div>
+      <div class="field"><label>Hedef kilo</label><input id="e_hedef" type="number" step="0.1" value="${d.hedefKilo??''}"></div>
+    </div>
+    <div class="field"><label>Tartı günü</label><select id="e_tarti">
+      <option value="">—</option>${HAFTA.map(g=>`<option ${sel(d.tartiGunu,g)}>${g}</option>`).join('')}
+    </select></div>
+    <div class="row">
+      <div class="field"><label>Ödeme günü <span class="muted">(ayın kaçı)</span></label><input id="e_ogun" type="number" min="1" max="31" value="${d.odemeGunu??''}"></div>
+      <div class="field"><label>Para birimi</label><select id="e_para">${paraOpts(d.paraBirimi)}</select></div>
+    </div>
+    <div class="field"><label>Aylık ücret</label><input id="e_onot" value="${esc(d.odemeNot||'')}" placeholder="ör. 1500"></div>
+    <label style="display:flex;align-items:center;gap:9px;font-size:14px;margin-bottom:14px;cursor:pointer">
+      <input type="checkbox" id="e_oodendi" ${d.odemeOdenenAy===ymStr(new Date().getFullYear(),new Date().getMonth())?'checked':''} style="width:18px;height:18px;accent-color:var(--primary)">
+      Bu ayki ödeme alındı
+    </label>
+    <div class="err" id="e_err"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Vazgeç</button>
+      <button class="btn" id="e_kaydet" onclick="danisanGuncelle('${id}')">Kaydet</button>
+    </div>`);
+};
+window.danisanGuncelle=async function(id){
+  const num=v=>{ const n=parseFloat(v); return isNaN(n)?null:n; };
+  const ad=$('e_ad').value.trim();
+  if(!ad){ $('e_err').textContent='Ad soyad boş olamaz.'; return; }
+  const upd={
+    adSoyad:ad,
+    telefon:$('e_tel').value.trim()||null,
+    yas:num($('e_yas').value), boy:num($('e_boy').value),
+    baslangicKilo:num($('e_bas').value), guncelKilo:num($('e_guncel').value),
+    hedefKilo:num($('e_hedef').value),
+    tartiGunu:$('e_tarti').value||null,
+    odemeGunu:(()=>{const n=parseInt($('e_ogun').value,10);return (n>=1&&n<=31)?n:null;})(),
+    paraBirimi:$('e_para').value||'₺',
+    odemeOdenenAy: $('e_oodendi').checked ? ymStr(new Date().getFullYear(),new Date().getMonth()) : null,
+    odemeNot:$('e_onot').value.trim()||null
+  };
+  const btn=$('e_kaydet'); btn.disabled=true; btn.textContent='Kaydediliyor…';
+  try{ await updateDoc(doc(db,'kullanicilar',id),upd); closeModal(); toast('Kaydedildi'); await loadDanisanlar(); }
+  catch(e){ $('e_err').textContent=authHata(e); btn.disabled=false; btn.textContent='Kaydet'; }
 };
 
 /* ---------- danışan detay (diyetisyen görünümü) ---------- */
@@ -1221,6 +1554,13 @@ window.kiloEkle=async function(profilId){
   if(!isNaN(kalca)) kayit.kalca=kalca;
   if(!isNaN(kol)) kayit.kol=kol;
   await addDoc(collection(db,'kullanicilar',profilId,'kilolar'), kayit);
+  // kart görünümü için güncel/başlangıç kiloyu profile yaz
+  try{
+    const upd={ guncelKilo:kilo };
+    if(danisanProfil && danisanProfil.baslangicKilo==null) upd.baslangicKilo=kilo;
+    await updateDoc(doc(db,'kullanicilar',profilId), upd);
+    if(danisanProfil){ danisanProfil.guncelKilo=kilo; if(upd.baslangicKilo!=null) danisanProfil.baslangicKilo=kilo; }
+  }catch(e){}
   toast('Eklendi', kilo+' kg kaydedildi.');
   renderKiloGorunum(state.profil.rol==='diyetisyen'?aktifDanisan:danisanProfil, state.profil.rol==='diyetisyen');
 };
@@ -1395,7 +1735,9 @@ function chatPanelCiz(){
       </div>
       <div class="chat-msgs" id="chatMsgs"></div>
       <div class="chat-input">
-        <input id="chatInput" placeholder="Mesaj yaz…" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();chatGonder()}">
+        <textarea id="chatInput" rows="1" placeholder="Mesaj yaz…"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
+          onkeydown="if(event.key==='Enter' && !event.shiftKey && !matchMedia('(pointer:coarse)').matches){event.preventDefault();chatGonder()}"></textarea>
         <button class="btn" onclick="chatGonder()">Gönder</button>
       </div>`;
     chatThreadCiz();
@@ -1435,7 +1777,7 @@ function chatThreadCiz(){
 window.chatGonder=async function(){
   const inp=$('chatInput'); if(!inp||!chatAktifUid) return;
   const metin=inp.value.trim(); if(!metin) return;
-  inp.value='';
+  inp.value=''; inp.style.height='auto';
   try{
     await addDoc(collection(db,'kullanicilar',chatAktifUid,'mesajlar'),
       { metin, gonderen:chatRol, gonderenUid:state.uid, olusturulma:Date.now() });
